@@ -36,7 +36,8 @@ export async function jws(
     x: encodeURLSafe(publicKey.data),
     use: "sig",
   };
-  const header = { alg: "EdDSA", typ: "JWT", jwk };
+  // NOTE: EdDSASha256 is a non-standard alg type for use with sha256 hashes
+  const header = { alg: "EdDSASha256", typ: "JWT", jwk };
   // UNIX origin time for current time
   const now = ~~(Date.now() / 1000);
   const oneHour = now + 60 * 60;
@@ -55,7 +56,7 @@ export async function jws(
     iat: now, // Issued at
     exp: oneHour, // Expiration Time
   };
-  // TODO: Do we need this: https://www.npmjs.com/package/canonicalize
+  // Optional: https://www.npmjs.com/package/canonicalize
   const encodedHeader = encodeURLSafe(encoder.encode(JSON.stringify(header)));
   const encodedPayload = encodeURLSafe(encoder.encode(JSON.stringify(payload)));
   const message = encoder.encode(`${encodedHeader}.${encodedPayload}`);

@@ -3,15 +3,15 @@
 ## Usage
 
 ```typescript
-import { create } from "@textile/near-storage";
-const storage = await create(); // Defaults should be fine
+import { connect, WalletConnection } from "near-api-js";
+import { openLockBox, store } from "@textile/near-storage";
 
-// Should already be logged in, if not:
-await storage.signIn("my app)
+const near = await connect({});
 
-console.log(storage.getAccountId());
+// Need to access wallet
+const walletConnection = new WalletConnection(near);
 
-await storage.lockFunds();
+const lockBox = openLockBox(walletConnection);
 
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "my_image.txt", {
@@ -19,8 +19,10 @@ const file = new File([blob], "my_image.txt", {
   lastModified: new Date().getTime(),
 });
 
-const { cid } = await storage.store(file);
+await lockBox.lockFunds();
+
+const { cid } = await store(file, walletConnection);
 console.log(cid);
 
-await storage.unlockFunds();
+await lockBox.unlockFunds();
 ```
