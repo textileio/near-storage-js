@@ -4,14 +4,17 @@
 
 ```typescript
 import { connect, WalletConnection } from "near-api-js";
-import { openLockBox, store } from "@textile/near-storage";
+import { openLockBox, openStore } from "@textile/near-storage";
 
-const near = await connect({});
+const near = await connect({ ... });
 
 // Need to access wallet
-const walletConnection = new WalletConnection(near);
+const wallet = new WalletConnection(near);
 
-const lockBox = openLockBox(walletConnection);
+const lockBox = openLockBox(wallet);
+const store = openStore(wallet, { ... });
+
+await lockBox.requestSignIn("my dapp");
 
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "my_image.txt", {
@@ -21,8 +24,10 @@ const file = new File([blob], "my_image.txt", {
 
 await lockBox.lockFunds();
 
-const { cid } = await store(file, walletConnection);
+const { cid } = await store(file);
 console.log(cid);
 
 await lockBox.unlockFunds();
+
+await lockBox.signOut();
 ```
