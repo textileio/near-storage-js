@@ -2,8 +2,8 @@
   "name": "@textile/near-storage",
   "version": "0.2.0",
   "description": "Javascript wrapper for Textile's Near storage system",
-  "main": "dist/index.js",
-  "types": "dist.index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/index.js",

@@ -7,7 +7,7 @@ const ONE = utils.format.parseNearAmount("1") ?? undefined;
 export const CONTRACT_NAME = "lock-box";
 const UPLOAD_URL = "https://broker.staging.textile.io/";
 
-type StoreFunction = (
+export type StoreFunction = (
   data: File,
   options?: { region: string }
 ) => Promise<StoreResponse>;
@@ -121,3 +121,5 @@ export function openLockBox(connection: WalletConnection) {
     signOut: () => connection.signOut(),
   };
 }
+
+export type LockBox = ReturnType<typeof openLockBox>;
