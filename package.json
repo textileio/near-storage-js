@@ -10,6 +10,9 @@
       "import": "./dist/index.js"
     }
   },
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "tsc",
