@@ -1,4 +1,4 @@
-import { Contract, Account, WalletConnection, utils } from "near-api-js";
+import { Contract, WalletConnection, utils } from "near-api-js";
 import { jws, JwsOptions } from "./jws";
 
 export { jws, JwsOptions };
@@ -8,7 +8,7 @@ export const CONTRACT_NAME = "lock-box";
 const UPLOAD_URL = "https://broker.staging.textile.io/";
 
 export interface OpenOptions {
-  region: string;
+  region?: string;
   blockIndex?: number;
 }
 
@@ -31,7 +31,7 @@ export interface StoreResponse {
 export function openStore(connection: WalletConnection): StoreFunction {
   return async function store(
     data: File,
-    options: OpenOptions = { region: "europe" }
+    options: OpenOptions = {}
   ): Promise<StoreResponse> {
     const { blockIndex, ...opts } = options;
     const formData = new FormData();
@@ -115,7 +115,7 @@ export function openLockBox(connection: WalletConnection) {
     },
     unlockFunds: async (): Promise<LockResponse | undefined> => {
       if (await checkLocked()) {
-        contract.unlockFunds({ accountId });
+        return contract.unlockFunds({ accountId });
       }
       locked = false;
       return;
