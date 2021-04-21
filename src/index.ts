@@ -7,9 +7,14 @@ const ONE = utils.format.parseNearAmount("1") ?? undefined;
 export const CONTRACT_NAME = "lock-box";
 const UPLOAD_URL = "https://broker.staging.textile.io/";
 
+export interface OpenOptions {
+  region: string;
+  blockIndex?: number;
+}
+
 export type StoreFunction = (
   data: File,
-  options?: { region: string }
+  options?: OpenOptions
 ) => Promise<StoreResponse>;
 
 /**
@@ -26,7 +31,7 @@ export interface StoreResponse {
 export function openStore(connection: WalletConnection): StoreFunction {
   return async function store(
     data: File,
-    options: { region: string; blockIndex?: number } = { region: "europe" }
+    options: OpenOptions = { region: "europe" }
   ): Promise<StoreResponse> {
     const { blockIndex, ...opts } = options;
     const formData = new FormData();
