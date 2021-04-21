@@ -20,25 +20,6 @@ export enum RequestStatus {
   Success,
 }
 
-export const statusString = (status: RequestStatus): string => {
-  switch (status) {
-    case RequestStatus.Unknown:
-      return "unknown";
-    case RequestStatus.Batching:
-      return "batching";
-    case RequestStatus.Preparing:
-      return "preparing";
-    case RequestStatus.Auctioning:
-      return "auctioning";
-    case RequestStatus.DealMaking:
-      return "deal-making";
-    case RequestStatus.Success:
-      return "success";
-    default:
-      return "invalid";
-  }
-};
-
 export type StatusFunction = (id: string) => Promise<StoreResponse>;
 
 /**
@@ -65,10 +46,14 @@ export interface Storage {
   status: StatusFunction;
 }
 
-export function openStore(connection: WalletConnection): Storage {
+export function openStore(
+  connection: WalletConnection,
+  options: { remoteUrl: string } = { remoteUrl: REMOTE_URL }
+): Storage {
   const account = connection.account();
   const { accountId } = account;
   const { signer, networkId } = account.connection;
+  const { remoteUrl } = options;
   return {
     store: async function store(
       data: File,
@@ -82,9 +67,9 @@ export function openStore(connection: WalletConnection): Storage {
       const token = await jws(signer, {
         accountId,
         networkId,
-        aud: REMOTE_URL,
+        aud: remoteUrl,
       });
-      const res = await fetch(`${REMOTE_URL}upload`, {
+      const res = await fetch(`${remoteUrl}upload`, {
         method: "POST",
         body: formData,
         headers: {
@@ -100,7 +85,7 @@ export function openStore(connection: WalletConnection): Storage {
         networkId,
         aud: REMOTE_URL,
       });
-      const res = await fetch(`${REMOTE_URL}storagerequest/${id}`, {
+      const res = await fetch(`${remoteUrl}storagerequest/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
