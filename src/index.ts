@@ -26,10 +26,11 @@ export interface StoreResponse {
 export function openStore(connection: WalletConnection): StoreFunction {
   return async function store(
     data: File,
-    options: { region: string } = { region: "europe" }
+    options: { region: string; blockIndex?: number } = { region: "europe" }
   ): Promise<StoreResponse> {
+    const { blockIndex, ...opts } = options;
     const formData = new FormData();
-    for (const [key, value] of Object.entries(options)) {
+    for (const [key, value] of Object.entries(opts)) {
       formData.append(key, value);
     }
 
@@ -42,6 +43,7 @@ export function openStore(connection: WalletConnection): StoreFunction {
       accountId,
       networkId,
       aud: UPLOAD_URL,
+      blk: blockIndex,
     });
     const res = await fetch(`${UPLOAD_URL}upload`, {
       method: "POST",
@@ -91,6 +93,8 @@ export function openLockBox(connection: WalletConnection) {
   // Keep local cache
   let locked: boolean | null = null;
   const checkLocked = async () => {
+    if (!accountId)
+      throw new Error("invalid accountId, ensure account is logged in");
     if (locked == null) {
       locked = await contract.hasLocked({ accountId });
     }
@@ -111,7 +115,11 @@ export function openLockBox(connection: WalletConnection) {
       locked = false;
       return;
     },
-    hasLocked: (): Promise<boolean> => contract.hasLocked({ accountId }),
+    hasLocked: (): Promise<boolean> => {
+      // Reset locked variable
+      locked = null;
+      return checkLocked();
+    },
     requestSignIn: (
       title?: string | undefined,
       successUrl?: string | undefined,
