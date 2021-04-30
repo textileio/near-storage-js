@@ -5,13 +5,26 @@ export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
 export const CONTRACT_NAME = "lock-box";
-const UPLOAD_URL = "https://broker.staging.textile.io/";
+const REMOTE_URL = "https://broker.staging.textile.io/";
 
 export interface OpenOptions {
   region?: string;
-  blockIndex?: number;
 }
 
+export enum RequestStatus {
+  Unknown = 0,
+  Batching,
+  Preparing,
+  Auctioning,
+  DealMaking,
+  Success,
+}
+
+export type StatusFunction = (id: string) => Promise<StoreResponse>;
+
+/**
+ * Function definition for call to store data.
+ */
 export type StoreFunction = (
   data: File,
   options?: OpenOptions
@@ -25,40 +38,62 @@ export interface StoreResponse {
   cid: {
     "/": string;
   };
-  status_code: number;
+  status_code: RequestStatus;
 }
 
-export function openStore(connection: WalletConnection): StoreFunction {
-  return async function store(
-    data: File,
-    options: OpenOptions = {}
-  ): Promise<StoreResponse> {
-    const { blockIndex, ...opts } = options;
-    const formData = new FormData();
-    for (const [key, value] of Object.entries(opts)) {
-      formData.append(key, value);
-    }
+export interface Storage {
+  store: StoreFunction;
+  status: StatusFunction;
+}
 
-    const account = connection.account();
-    const { accountId } = account;
-    const { signer, networkId } = account.connection;
-
-    formData.append("file", data, data.name);
-    const token = await jws(signer, {
-      accountId,
-      networkId,
-      aud: UPLOAD_URL,
-      blk: blockIndex,
-    });
-    const res = await fetch(`${UPLOAD_URL}upload`, {
-      method: "POST",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const json = await res.json();
-    return json;
+export function openStore(
+  connection: WalletConnection,
+  options: { remoteUrl: string } = { remoteUrl: REMOTE_URL }
+): Storage {
+  const account = connection.account();
+  const { accountId } = account;
+  const { signer, networkId } = account.connection;
+  const { remoteUrl } = options;
+  return {
+    store: async function store(
+      data: File,
+      options: OpenOptions = {}
+    ): Promise<StoreResponse> {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(options)) {
+        formData.append(key, value);
+      }
+      formData.append("file", data, data.name);
+      const token = await jws(signer, {
+        accountId,
+        networkId,
+        aud: remoteUrl,
+      });
+      const res = await fetch(`${remoteUrl}upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const json = await res.json();
+      return json;
+    },
+    status: async function status(id: string): Promise<StoreResponse> {
+      const token = await jws(signer, {
+        accountId,
+        networkId,
+        aud: REMOTE_URL,
+      });
+      const res = await fetch(`${remoteUrl}storagerequest/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const json = await res.json();
+      return json;
+    },
   };
 }
 
