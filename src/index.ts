@@ -48,12 +48,17 @@ export interface Storage {
 
 export function openStore(
   connection: WalletConnection,
-  options: { remoteUrl: string } = { remoteUrl: REMOTE_URL }
+  options: { remoteUrl?: string; brokerInfo?: BrokerInfo } = {
+    remoteUrl: REMOTE_URL,
+  }
 ): Storage {
   const account = connection.account();
   const { accountId } = account;
   const { signer, networkId } = account.connection;
-  const { remoteUrl } = options;
+  const { remoteUrl, brokerInfo } = options;
+  // Default to first entry in broker info addresses for now
+  const url = remoteUrl ?? brokerInfo?.addresses[0];
+  if (!url) throw new Error("Must provide one of remoteUrl or brokerInfo");
   return {
     store: async function store(
       data: File,
@@ -69,7 +74,7 @@ export function openStore(
         networkId,
         aud: remoteUrl,
       });
-      const res = await fetch(`${remoteUrl}upload`, {
+      const res = await fetch(`${url}upload`, {
         method: "POST",
         body: formData,
         headers: {
@@ -85,7 +90,7 @@ export function openStore(
         networkId,
         aud: REMOTE_URL,
       });
-      const res = await fetch(`${remoteUrl}storagerequest/${id}`, {
+      const res = await fetch(`${url}storagerequest/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -166,7 +171,13 @@ export function openLockBox(connection: WalletConnection) {
       const idx = Math.floor(Math.random() * brokers.length);
       return brokers[idx];
     },
-    lockFunds: async (brokerId: string): Promise<LockInfo | undefined> => {
+    lockFunds: async (brokerId?: string): Promise<LockInfo | undefined> => {
+      if (brokerId === undefined) {
+        const brokerInfo = await contract.getBroker();
+        if (brokerInfo === undefined)
+          throw new Error("unable to get broker info");
+        brokerId = brokerInfo.brokerId;
+      }
       if (!(await checkLocked(brokerId))) {
         return contract.lockFunds({ brokerId, accountId }, undefined, ONE);
       }
@@ -176,12 +187,12 @@ export function openLockBox(connection: WalletConnection) {
     unlockFunds: async (): Promise<void> => {
       return contract.unlockFunds();
     },
-    hasLocked: (brokerId: string): Promise<boolean> => {
+    hasLocked: async (brokerId: string): Promise<boolean> => {
       // Reset locked variable
       locked = null;
       return checkLocked(brokerId);
     },
-    requestSignIn: (
+    requestSignIn: async (
       title?: string | undefined,
       successUrl?: string | undefined,
       failureUrl?: string | undefined
