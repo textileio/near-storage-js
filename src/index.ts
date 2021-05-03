@@ -5,7 +5,7 @@ export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
 export const CONTRACT_NAME = "lock-box";
-const REMOTE_URL = "https://broker.staging.textile.io/";
+const REMOTE_URL = "https://broker.staging.textile.io";
 
 export interface OpenOptions {
   region?: string;
@@ -74,7 +74,7 @@ export function openStore(
         networkId,
         aud: brokerInfo.brokerId,
       });
-      const res = await fetch(`${url}upload`, {
+      const res = await fetch(`${url}/upload`, {
         method: "POST",
         body: formData,
         headers: {
@@ -90,7 +90,7 @@ export function openStore(
         networkId,
         aud: REMOTE_URL,
       });
-      const res = await fetch(`${url}storagerequest/${id}`, {
+      const res = await fetch(`${url}/storagerequest/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
