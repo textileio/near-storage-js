@@ -48,17 +48,17 @@ export interface Storage {
 
 export function openStore(
   connection: WalletConnection,
-  options: { remoteUrl?: string; brokerInfo?: BrokerInfo } = {
-    remoteUrl: REMOTE_URL,
-  }
+  options: { brokerInfo: BrokerInfo }
 ): Storage {
   const account = connection.account();
   const { accountId } = account;
   const { signer, networkId } = account.connection;
-  const { remoteUrl, brokerInfo } = options;
+  const { brokerInfo } = options;
+  if (!brokerInfo) throw new Error("Must provide broker information");
   // Default to first entry in broker info addresses for now
-  const url = remoteUrl ?? brokerInfo?.addresses[0];
-  if (!url) throw new Error("Must provide one of remoteUrl or brokerInfo");
+  // TODO: Leaving default remote url here for now, should be removed
+  const url = brokerInfo.addresses[0] ?? REMOTE_URL;
+
   return {
     store: async function store(
       data: File,
@@ -72,7 +72,7 @@ export function openStore(
       const token = await jws(signer, {
         accountId,
         networkId,
-        aud: remoteUrl,
+        aud: brokerInfo.brokerId,
       });
       const res = await fetch(`${url}upload`, {
         method: "POST",
