@@ -145,7 +145,7 @@ export function openLockBox(connection: WalletConnection) {
   const contractName = `${CONTRACT_NAME}.${networkId}`;
   const contract = new Contract(account, contractName, {
     // View methods are read-only – they don't modify the state, but usually return some value
-    viewMethods: ["hasLocked"],
+    viewMethods: ["hasLocked", "listBrokers", "getBroker"],
     // Change methods can modify the state, but you don't receive the returned value when called
     changeMethods: ["lockFunds", "unlockFunds"],
   }) as LockBoxContract;
