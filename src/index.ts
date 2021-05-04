@@ -81,14 +81,18 @@ export function openStore(
           Authorization: `Bearer ${token}`,
         },
       });
-      const json = await res.json();
-      return json;
+      if (res.ok) {
+        const json = await res.json();
+        return json;
+      }
+      const err = await res.text();
+      throw new Error(err);
     },
     status: async function status(id: string): Promise<StoreResponse> {
       const token = await jws(signer, {
         accountId,
         networkId,
-        aud: REMOTE_URL,
+        aud: brokerInfo.brokerId,
       });
       const res = await fetch(`${url}/storagerequest/${id}`, {
         method: "GET",
@@ -96,8 +100,12 @@ export function openStore(
           Authorization: `Bearer ${token}`,
         },
       });
-      const json = await res.json();
-      return json;
+      if (res.ok) {
+        const json = await res.json();
+        return json;
+      }
+      const err = await res.text();
+      throw new Error(err);
     },
   };
 }
