@@ -5,7 +5,7 @@ export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
 export const CONTRACT_NAME = "lock-box";
-const REMOTE_URL = "https://broker.staging.textile.io/";
+const REMOTE_URL = "https://broker.staging.textile.io";
 
 export interface OpenOptions {
   region?: string;
@@ -48,12 +48,17 @@ export interface Storage {
 
 export function openStore(
   connection: WalletConnection,
-  options: { remoteUrl: string } = { remoteUrl: REMOTE_URL }
+  options: { brokerInfo: BrokerInfo }
 ): Storage {
   const account = connection.account();
   const { accountId } = account;
   const { signer, networkId } = account.connection;
-  const { remoteUrl } = options;
+  const { brokerInfo } = options;
+  if (!brokerInfo) throw new Error("Must provide broker information");
+  // Default to first entry in broker info addresses for now
+  // TODO: Leaving default remote url here for now, should be removed
+  const url = brokerInfo.addresses[0] ?? REMOTE_URL;
+
   return {
     store: async function store(
       data: File,
@@ -67,55 +72,77 @@ export function openStore(
       const token = await jws(signer, {
         accountId,
         networkId,
-        aud: remoteUrl,
+        aud: brokerInfo.brokerId,
       });
-      const res = await fetch(`${remoteUrl}upload`, {
+      const res = await fetch(`${url}/upload`, {
         method: "POST",
         body: formData,
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const json = await res.json();
-      return json;
+      if (res.ok) {
+        const json = await res.json();
+        return json;
+      }
+      const err = await res.text();
+      throw new Error(err);
     },
     status: async function status(id: string): Promise<StoreResponse> {
       const token = await jws(signer, {
         accountId,
         networkId,
-        aud: REMOTE_URL,
+        aud: brokerInfo.brokerId,
       });
-      const res = await fetch(`${remoteUrl}storagerequest/${id}`, {
+      const res = await fetch(`${url}/storagerequest/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const json = await res.json();
-      return json;
+      if (res.ok) {
+        const json = await res.json();
+        return json;
+      }
+      const err = await res.text();
+      throw new Error(err);
     },
   };
 }
 
-/**
- * Response from calls to the near lock-box contract.
- */
-export interface LockResponse {
-  blockIndex: string;
+export interface DepositInfo {
+  // The sender account id. i.e., the account locking the funds.
+  sender: string;
+  // The block index at which funds should expire.
+  expiration: number;
+  // The amount of locked funds (in Ⓝ). Currently defaults to 1.
+  amount: number;
+}
+
+export interface LockInfo {
+  accountId: string;
+  brokerId: string;
+  deposit: DepositInfo;
+}
+
+export interface BrokerInfo {
+  brokerId: string;
+  addresses: string[];
 }
 
 interface LockBoxContract extends Contract {
   lockFunds: (
-    args: { accountId?: string },
+    args: { brokerId: string; accountId?: string },
     gas?: string,
     amount?: string
-  ) => Promise<LockResponse>;
-  unlockFunds: (
-    args: { accountId?: string },
-    gas?: string,
-    amount?: string
-  ) => Promise<LockResponse>;
-  hasLocked: (args: { accountId?: string }) => Promise<boolean>;
+  ) => Promise<LockInfo>;
+  unlockFunds: (gas?: string, amount?: string) => Promise<void>;
+  hasLocked: (args: {
+    brokerId: string;
+    accountId: string;
+  }) => Promise<boolean>;
+  getBroker: (brokerId?: string) => Promise<BrokerInfo | undefined>;
+  listBrokers: () => Promise<BrokerInfo[]>;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -126,41 +153,54 @@ export function openLockBox(connection: WalletConnection) {
   const contractName = `${CONTRACT_NAME}.${networkId}`;
   const contract = new Contract(account, contractName, {
     // View methods are read-only – they don't modify the state, but usually return some value
-    viewMethods: ["hasLocked"],
+    viewMethods: ["hasLocked", "listBrokers", "getBroker"],
     // Change methods can modify the state, but you don't receive the returned value when called
     changeMethods: ["lockFunds", "unlockFunds"],
   }) as LockBoxContract;
   // Keep local cache
   let locked: boolean | null = null;
-  const checkLocked = async () => {
+  const checkLocked = async (brokerId: string) => {
     if (!accountId)
       throw new Error("invalid accountId, ensure account is logged in");
     if (locked == null) {
-      locked = await contract.hasLocked({ accountId });
+      locked = await contract.hasLocked({ brokerId, accountId });
     }
     return locked;
   };
-  return {
-    lockFunds: async (): Promise<LockResponse | undefined> => {
-      if (!(await checkLocked())) {
-        return contract.lockFunds({ accountId }, undefined, ONE);
+  const res = {
+    listBrokers: async (): Promise<BrokerInfo[]> => {
+      return contract.listBrokers();
+    },
+    getBroker: async (brokerId?: string): Promise<BrokerInfo | undefined> => {
+      if (brokerId !== undefined) {
+        return contract.getBroker(brokerId);
+      }
+      const brokers = await contract.listBrokers();
+      const idx = Math.floor(Math.random() * brokers.length);
+      return brokers[idx];
+    },
+    lockFunds: async (brokerId?: string): Promise<LockInfo | undefined> => {
+      if (brokerId === undefined) {
+        const brokerInfo = await res.getBroker();
+        if (brokerInfo === undefined)
+          throw new Error("unable to get broker info");
+        brokerId = brokerInfo.brokerId;
+      }
+      if (!(await checkLocked(brokerId))) {
+        return contract.lockFunds({ brokerId, accountId }, undefined, ONE);
       }
       locked = true;
       return;
     },
-    unlockFunds: async (): Promise<LockResponse | undefined> => {
-      if (await checkLocked()) {
-        return contract.unlockFunds({ accountId });
-      }
-      locked = false;
-      return;
+    unlockFunds: async (): Promise<void> => {
+      return contract.unlockFunds();
     },
-    hasLocked: (): Promise<boolean> => {
+    hasLocked: async (brokerId: string): Promise<boolean> => {
       // Reset locked variable
       locked = null;
-      return checkLocked();
+      return checkLocked(brokerId);
     },
-    requestSignIn: (
+    requestSignIn: async (
       title?: string | undefined,
       successUrl?: string | undefined,
       failureUrl?: string | undefined
@@ -168,6 +208,7 @@ export function openLockBox(connection: WalletConnection) {
       connection.requestSignIn(contractName, title, successUrl, failureUrl),
     signOut: () => connection.signOut(),
   };
+  return res;
 }
 
 export type LockBox = ReturnType<typeof openLockBox>;
