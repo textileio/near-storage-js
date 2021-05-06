@@ -181,7 +181,7 @@ export function openLockBox(connection: WalletConnection) {
     },
     lockFunds: async (brokerId?: string): Promise<LockInfo | undefined> => {
       if (brokerId === undefined) {
-        const brokerInfo = await contract.getBroker();
+        const brokerInfo = await res.getBroker();
         if (brokerInfo === undefined)
           throw new Error("unable to get broker info");
         brokerId = brokerInfo.brokerId;
