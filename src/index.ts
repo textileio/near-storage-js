@@ -143,12 +143,14 @@ function initDeposit(
       return contract.getBroker(id ?? brokerId);
     },
     addDeposit: async (): Promise<DepositInfo> => {
+      if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
       return contract.addDeposit({ brokerId, accountId }, undefined, ONE);
     },
     releaseDeposits: async (): Promise<void> => {
       return contract.releaseDeposits();
     },
     hasDeposit: async (): Promise<boolean> => {
+      if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
       return contract.hasDeposit({ brokerId, accountId });
     },
   };
@@ -213,6 +215,9 @@ export async function init(
       last = broker;
       // For now, go with first broker we find where user has deposited funds
       const { brokerId } = broker;
+      if (!accountId) {
+        break;
+      }
       const has = await contract.hasDeposit({ brokerId, accountId });
       if (has) {
         brokerInfo = broker;
