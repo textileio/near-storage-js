@@ -1,7 +1,7 @@
 {
   "name": "@textile/near-storage",
   "version": "2.0.5",
-  "description": "Javascript wrapper for Textile's Near storage system",
+  "description": "Javascript SDK for Textile's Broker-based data storage system on the Near blockchain",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -18,7 +18,8 @@
     "prepublishOnly": "npm run build",
     "build": "tsc",
     "clean": "rimraf ./dist",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "docs": "typedoc --excludePrivate --excludeInternal src/index.ts"
   },
   "keywords": [
     "near",
@@ -42,6 +43,7 @@
     "jest-environment-node": "^26.6.2",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
+    "typedoc": "^0.20.36",
     "typescript": "^4.2.4"
   },
   "dependencies": {
