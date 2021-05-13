@@ -4,6 +4,7 @@ import { jws, JwsOptions } from "./jws";
 export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
+const GAS = "300000000000000"; // 3e13
 const REMOTE_URL = "https://broker.staging.textile.io";
 
 export enum RequestStatus {
@@ -107,7 +108,11 @@ interface DepositContract extends Contract {
     gas?: string,
     amount?: string
   ) => Promise<DepositInfo>;
-  releaseDeposits: (gas?: string, amount?: string) => Promise<void>;
+  releaseDeposits: (
+    args?: unknown,
+    gas?: string,
+    amount?: string
+  ) => Promise<void>;
   hasDeposit: (args: {
     brokerId: string;
     accountId: string;
@@ -144,10 +149,10 @@ function initDeposit(
     },
     addDeposit: async (): Promise<DepositInfo> => {
       if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
-      return contract.addDeposit({ brokerId, accountId }, undefined, ONE);
+      return contract.addDeposit({ brokerId, accountId }, GAS, ONE);
     },
     releaseDeposits: async (): Promise<void> => {
-      return contract.releaseDeposits();
+      return contract.releaseDeposits({}, GAS);
     },
     hasDeposit: async (): Promise<boolean> => {
       if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
