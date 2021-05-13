@@ -4,12 +4,7 @@ import { jws, JwsOptions } from "./jws";
 export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
-export const CONTRACT_NAME = "lock-box";
 const REMOTE_URL = "https://broker.staging.textile.io";
-
-export interface OpenOptions {
-  region?: string;
-}
 
 export enum RequestStatus {
   Unknown = 0,
@@ -20,15 +15,10 @@ export enum RequestStatus {
   Success,
 }
 
-export type StatusFunction = (id: string) => Promise<StoreResponse>;
-
-/**
- * Function definition for call to store data.
- */
-export type StoreFunction = (
-  data: File,
-  options?: OpenOptions
-) => Promise<StoreResponse>;
+export interface BrokerInfo {
+  brokerId: string;
+  addresses: string[];
+}
 
 /**
  * Response from calls to the storage upload endpoint.
@@ -41,15 +31,14 @@ export interface StoreResponse {
   status_code: RequestStatus;
 }
 
-export interface Storage {
-  store: StoreFunction;
-  status: StatusFunction;
+export interface OpenOptions {
+  region?: string;
 }
 
-export function openStore(
+function initStorage(
   connection: WalletConnection,
   options: { brokerInfo: BrokerInfo }
-): Storage {
+) {
   const account = connection.account();
   const { accountId } = account;
   const { signer, networkId } = account.connection;
@@ -110,34 +99,16 @@ export function openStore(
   };
 }
 
-export interface DepositInfo {
-  // The sender account id. i.e., the account locking the funds.
-  sender: string;
-  // The block index at which funds should expire.
-  expiration: number;
-  // The amount of locked funds (in Ⓝ). Currently defaults to 1.
-  amount: number;
-}
+type StorageType = ReturnType<typeof initStorage>;
 
-export interface LockInfo {
-  accountId: string;
-  brokerId: string;
-  deposit: DepositInfo;
-}
-
-export interface BrokerInfo {
-  brokerId: string;
-  addresses: string[];
-}
-
-interface LockBoxContract extends Contract {
-  lockFunds: (
+interface DepositContract extends Contract {
+  addDeposit: (
     args: { brokerId: string; accountId?: string },
     gas?: string,
     amount?: string
-  ) => Promise<LockInfo>;
-  unlockFunds: (gas?: string, amount?: string) => Promise<void>;
-  hasLocked: (args: {
+  ) => Promise<DepositInfo>;
+  releaseDeposits: (gas?: string, amount?: string) => Promise<void>;
+  hasDeposit: (args: {
     brokerId: string;
     accountId: string;
   }) => Promise<boolean>;
@@ -145,61 +116,51 @@ interface LockBoxContract extends Contract {
   listBrokers: () => Promise<BrokerInfo[]>;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function openLockBox(connection: WalletConnection) {
-  const account = connection.account();
-  const { accountId } = account;
-  const { networkId } = account.connection;
-  const contractName = `${CONTRACT_NAME}.${networkId}`;
-  const contract = new Contract(account, contractName, {
-    // View methods are read-only – they don't modify the state, but usually return some value
-    viewMethods: ["hasLocked", "listBrokers", "getBroker"],
-    // Change methods can modify the state, but you don't receive the returned value when called
-    changeMethods: ["lockFunds", "unlockFunds"],
-  }) as LockBoxContract;
-  // Keep local cache
-  let locked: boolean | null = null;
-  const checkLocked = async (brokerId: string) => {
-    if (!accountId)
-      throw new Error("invalid accountId, ensure account is logged in");
-    if (locked == null) {
-      locked = await contract.hasLocked({ brokerId, accountId });
-    }
-    return locked;
-  };
-  const res = {
+export interface Deposit {
+  // The sender account id. i.e., the account depositing the funds.
+  sender: string;
+  // The block index at which funds should expire.
+  expiration: number;
+  // The amount of deposited funds (in Ⓝ). Currently defaults to 1.
+  amount: number;
+}
+
+export interface DepositInfo {
+  accountId: string;
+  brokerId: string;
+  deposit: Deposit;
+}
+
+function initDeposit(
+  contract: DepositContract,
+  { accountId, brokerId }: { accountId: string; brokerId: string }
+) {
+  return {
     listBrokers: async (): Promise<BrokerInfo[]> => {
       return contract.listBrokers();
     },
-    getBroker: async (brokerId?: string): Promise<BrokerInfo | undefined> => {
-      if (brokerId !== undefined) {
-        return contract.getBroker(brokerId);
-      }
-      const brokers = await contract.listBrokers();
-      const idx = Math.floor(Math.random() * brokers.length);
-      return brokers[idx];
+    getBroker: async (id?: string): Promise<BrokerInfo | undefined> => {
+      return contract.getBroker(id ?? brokerId);
     },
-    lockFunds: async (brokerId?: string): Promise<LockInfo | undefined> => {
-      if (brokerId === undefined) {
-        const brokerInfo = await res.getBroker();
-        if (brokerInfo === undefined)
-          throw new Error("unable to get broker info");
-        brokerId = brokerInfo.brokerId;
-      }
-      if (!(await checkLocked(brokerId))) {
-        return contract.lockFunds({ brokerId, accountId }, undefined, ONE);
-      }
-      locked = true;
-      return;
+    addDeposit: async (): Promise<DepositInfo> => {
+      return contract.addDeposit({ brokerId, accountId }, undefined, ONE);
     },
-    unlockFunds: async (): Promise<void> => {
-      return contract.unlockFunds();
+    releaseDeposits: async (): Promise<void> => {
+      return contract.releaseDeposits();
     },
-    hasLocked: async (brokerId: string): Promise<boolean> => {
-      // Reset locked variable
-      locked = null;
-      return checkLocked(brokerId);
+    hasDeposit: async (): Promise<boolean> => {
+      return contract.hasDeposit({ brokerId, accountId });
     },
+  };
+}
+
+type DepositType = ReturnType<typeof initDeposit>;
+
+function initSignIn(connection: WalletConnection) {
+  const account = connection.account();
+  const { networkId } = account.connection;
+  const contractName = `${CONTRACT_NAME}.${networkId}`;
+  return {
     requestSignIn: async (
       title?: string | undefined,
       successUrl?: string | undefined,
@@ -208,7 +169,63 @@ export function openLockBox(connection: WalletConnection) {
       connection.requestSignIn(contractName, title, successUrl, failureUrl),
     signOut: () => connection.signOut(),
   };
-  return res;
 }
 
-export type LockBox = ReturnType<typeof openLockBox>;
+type SignInType = ReturnType<typeof initSignIn>;
+
+function initContract(connection: WalletConnection) {
+  const account = connection.account();
+  const { networkId } = account.connection;
+  const contractName = `${CONTRACT_NAME}.${networkId}`;
+  const contract = new Contract(account, contractName, {
+    // View methods are read-only – they don't modify the state, but usually return some value
+    viewMethods: ["hasDeposit", "listBrokers", "getBroker"],
+    // Change methods can modify the state, but you don't receive the returned value when called
+    changeMethods: ["addDeposit", "releaseDeposits"],
+  }) as DepositContract;
+
+  return contract;
+}
+
+// MAIN EXPORTS
+
+export const CONTRACT_NAME = "lock-box";
+
+export type API = StorageType & DepositType & SignInType;
+
+export async function init(
+  connection: WalletConnection,
+  options: { brokerInfo?: BrokerInfo } = {}
+): Promise<API> {
+  const account = connection.account();
+  const { accountId } = account;
+  let { brokerInfo } = options;
+
+  const contract = initContract(connection);
+
+  if (!brokerInfo) {
+    const brokers = await contract.listBrokers();
+    if (brokers.length < 1) {
+      throw new Error("no registered brokers");
+    }
+    let last: BrokerInfo;
+    for (const broker of brokers) {
+      last = broker;
+      // For now, go with first broker we find where user has deposited funds
+      const { brokerId } = broker;
+      const has = await contract.hasDeposit({ brokerId, accountId });
+      if (has) {
+        brokerInfo = broker;
+      }
+    }
+    if (!brokerInfo) {
+      brokerInfo = last!;
+    }
+  }
+  const { brokerId } = brokerInfo;
+  const deposit = initDeposit(contract, { accountId, brokerId });
+  const signIn = initSignIn(connection);
+  const storage = initStorage(connection, { brokerInfo });
+
+  return { ...signIn, ...deposit, ...storage };
+}
