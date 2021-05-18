@@ -147,9 +147,9 @@ function initDeposit(
     getBroker: async (id?: string): Promise<BrokerInfo | undefined> => {
       return contract.getBroker(id ?? brokerId);
     },
-    addDeposit: async (): Promise<DepositInfo> => {
-      if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
-      return contract.addDeposit({ brokerId, accountId }, GAS, ONE);
+    addDeposit: async (id: string = accountId): Promise<DepositInfo> => {
+      if (!id) throw new Error(`invalid account id: "${id}"`);
+      return contract.addDeposit({ brokerId, accountId: id }, GAS, ONE);
     },
     releaseDeposits: async (): Promise<void> => {
       return contract.releaseDeposits({}, GAS);
