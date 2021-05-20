@@ -196,7 +196,7 @@ function initContract(connection: WalletConnection) {
 
 // MAIN EXPORTS
 
-export const CONTRACT_NAME = "lock-box";
+export const CONTRACT_NAME = "init";
 
 export type API = StorageType & DepositType & SignInType;
 
