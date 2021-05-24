@@ -5,6 +5,7 @@ export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
 const GAS = "300000000000000"; // 3e13
+export const CONTRACT_NAME = "lock-box";
 const REMOTE_URL = "https://broker.staging.textile.dev";
 
 export enum RequestStatus {
@@ -195,8 +196,6 @@ function initContract(connection: WalletConnection) {
 }
 
 // MAIN EXPORTS
-
-export const CONTRACT_NAME = "lock-box";
 
 export type API = StorageType & DepositType & SignInType;
 
