@@ -5,7 +5,7 @@ export { jws, JwsOptions };
 
 const ONE = utils.format.parseNearAmount("1") ?? undefined;
 const GAS = "300000000000000"; // 3e13
-export const CONTRACT_NAME = "lock-box";
+export const DEFAULT_CONTRACT_NAME = "filecoin-bridge";
 const REMOTE_URL = "https://broker.staging.textile.dev";
 
 export enum RequestStatus {
@@ -164,28 +164,28 @@ function initDeposit(
 
 type DepositType = ReturnType<typeof initDeposit>;
 
-function initSignIn(connection: WalletConnection) {
+function initSignIn(connection: WalletConnection, contractName: string) {
   const account = connection.account();
   const { networkId } = account.connection;
-  const contractName = `${CONTRACT_NAME}.${networkId}`;
+  const fullContractName = `${contractName}.${networkId}`;
   return {
     requestSignIn: async (
       title?: string | undefined,
       successUrl?: string | undefined,
       failureUrl?: string | undefined
     ): Promise<void> =>
-      connection.requestSignIn(contractName, title, successUrl, failureUrl),
+      connection.requestSignIn(fullContractName, title, successUrl, failureUrl),
     signOut: () => connection.signOut(),
   };
 }
 
 type SignInType = ReturnType<typeof initSignIn>;
 
-function initContract(connection: WalletConnection) {
+function initContract(connection: WalletConnection, contractName: string) {
   const account = connection.account();
   const { networkId } = account.connection;
-  const contractName = `${CONTRACT_NAME}.${networkId}`;
-  const contract = new Contract(account, contractName, {
+  const fullContractName = `${contractName}.${networkId}`;
+  const contract = new Contract(account, fullContractName, {
     // View methods are read-only – they don't modify the state, but usually return some value
     viewMethods: ["hasDeposit", "listBrokers", "getBroker"],
     // Change methods can modify the state, but you don't receive the returned value when called
@@ -201,22 +201,23 @@ export type API = StorageType & DepositType & SignInType;
 
 export async function init(
   connection: WalletConnection,
-  options: { brokerInfo?: BrokerInfo } = {}
+  options: { brokerInfo?: BrokerInfo; contractName?: string } = {}
 ): Promise<API> {
   const account = connection.account();
   const { accountId } = account;
   let { brokerInfo } = options;
 
-  const contract = initContract(connection);
+  const contract = initContract(
+    connection,
+    options.contractName || DEFAULT_CONTRACT_NAME
+  );
 
   if (!brokerInfo) {
     const brokers = await contract.listBrokers();
     if (brokers.length < 1) {
       throw new Error("no registered brokers");
     }
-    let last: BrokerInfo;
     for (const broker of brokers) {
-      last = broker;
       // For now, go with first broker we find where user has deposited funds
       const { brokerId } = broker;
       if (!accountId) {
@@ -228,12 +229,15 @@ export async function init(
       }
     }
     if (!brokerInfo) {
-      brokerInfo = last!;
+      brokerInfo = brokers[brokers.length - 1];
     }
   }
   const { brokerId } = brokerInfo;
   const deposit = initDeposit(contract, { accountId, brokerId });
-  const signIn = initSignIn(connection);
+  const signIn = initSignIn(
+    connection,
+    options.contractName || DEFAULT_CONTRACT_NAME
+  );
   const storage = initStorage(connection, { brokerInfo });
 
   return { ...signIn, ...deposit, ...storage };
