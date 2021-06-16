@@ -1,5 +1,5 @@
 import { InMemorySigner } from "near-api-js";
-import type { PublicKey } from "near-api-js/src/utils/key_pair";
+import type { PublicKey } from "near-api-js/lib/utils/key_pair";
 import { InMemoryKeyStore } from "near-api-js/lib/key_stores/in_memory_key_store";
 import { decodeURLSafe, encodeURLSafe } from "@stablelib/base64";
 import { encode } from "bs58";
