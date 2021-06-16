@@ -40,7 +40,7 @@ export async function jws(
   const header = { alg: "EdDSASha256", typ: "JWT", jwk };
   // UNIX origin time for current time
   const now = ~~(Date.now() / 1000);
-  const oneHour = now + 60 * 60;
+  const oneHour = now + 60 * 10; // Default to 10 minutes
   // Compute did
   const buffer = new Uint8Array(2 + publicKey.data.length);
   buffer[0] = 0xed; // Using ed25519 by default
@@ -49,12 +49,12 @@ export async function jws(
   // prefix with `z` to indicate multi-base base58btc encoding
   const id = `z${encode(buffer)}`;
   const payload = {
-    ...extras,
     iss: accountId, // Identifies principal that issued the JWT.
     sub: `did:key:${id}`, // Identifies the subject of the JWT.
     nbf: now, // Not Before
     iat: now, // Issued at
     exp: oneHour, // Expiration Time
+    ...extras, // Allow callers to overwrite defaults via extras
   };
   // Optional: https://www.npmjs.com/package/canonicalize
   const encodedHeader = encodeURLSafe(encoder.encode(JSON.stringify(header)));
