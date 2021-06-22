@@ -1,18 +1,16 @@
-import { InMemorySigner } from "near-api-js";
-import type { PublicKey } from "near-api-js/lib/utils/key_pair";
-import { InMemoryKeyStore } from "near-api-js/lib/key_stores/in_memory_key_store";
+import { InMemorySigner, keyStores, utils } from "near-api-js";
 import { decodeURLSafe, encodeURLSafe } from "@stablelib/base64";
 import { encode } from "bs58";
 
 import { jws } from "../jws";
 
 const decoder = new TextDecoder();
-const signer = new InMemorySigner(new InMemoryKeyStore());
+const signer = new InMemorySigner(new keyStores.InMemoryKeyStore());
 const accountId = "account.testnet";
 const networkId = "network.id";
 const aud = "broker.testnet";
 
-let publicKey: PublicKey;
+let publicKey: utils.PublicKey;
 
 beforeAll(async () => {
   publicKey = await signer.createKey(accountId, networkId);

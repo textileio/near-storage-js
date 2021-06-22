@@ -1,6 +1,6 @@
 export default {
   // All imported modules in your tests should be mocked automatically
-  // automock: false,
+  automock: false,
 
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
@@ -17,12 +17,13 @@ export default {
   // An object that configures minimum threshold enforcement for coverage results
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 60,
       functions: 80,
       lines: 80,
       statements: 80,
     },
   },
+  transformIgnorePatterns: ["node_modules/(?!(fetch-blob)/)"],
 
   // Automatically reset mock state between every test
   resetMocks: false,
@@ -32,4 +33,6 @@ export default {
 
   // The test environment that will be used for testing
   testEnvironment: "node",
+  testPathIgnorePatterns: ["node_modules", "dist"],
+  coveragePathIgnorePatterns: ["node_modules", "src/tests/account*"],
 };
