@@ -120,7 +120,7 @@ interface DepositContract extends Contract {
     accountId: string;
   }) => Promise<boolean>;
   getBroker: (args: { brokerId: string }) => Promise<BrokerInfo | undefined>;
-  listBrokers: (args: unknown) => Promise<BrokerInfo[]>;
+  listBrokers: () => Promise<BrokerInfo[]>;
 }
 
 export interface Deposit {
@@ -144,7 +144,7 @@ function initDeposit(
 ) {
   return {
     listBrokers: async (): Promise<BrokerInfo[]> => {
-      return contract.listBrokers({});
+      return contract.listBrokers();
     },
     getBroker: async (id?: string): Promise<BrokerInfo | undefined> => {
       return contract.getBroker({ brokerId: id ?? brokerId });
@@ -222,7 +222,7 @@ export async function init(
   );
 
   if (!brokerInfo) {
-    const brokers = await contract.listBrokers({ args: {} });
+    const brokers = await contract.listBrokers();
     if (brokers.length < 1) {
       throw new Error("no registered brokers");
     }
