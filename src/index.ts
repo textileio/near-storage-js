@@ -108,23 +108,19 @@ interface DepositContract extends Contract {
   addDeposit: (args: {
     args: { brokerId: string; accountId?: string };
     gas?: string;
-    amount?: string;
+    attachedDeposit?: string;
   }) => Promise<DepositInfo>;
   releaseDeposits: (args: {
-    args?: unknown;
+    args: unknown;
     gas?: string;
-    amount?: string;
+    attachedDeposit?: string;
   }) => Promise<void>;
   hasDeposit: (args: {
-    args: {
-      brokerId: string;
-      accountId: string;
-    };
+    brokerId: string;
+    accountId: string;
   }) => Promise<boolean>;
-  getBroker: (args: {
-    args?: { brokerId: string };
-  }) => Promise<BrokerInfo | undefined>;
-  listBrokers: () => Promise<BrokerInfo[]>;
+  getBroker: (args: { brokerId: string }) => Promise<BrokerInfo | undefined>;
+  listBrokers: (args: unknown) => Promise<BrokerInfo[]>;
 }
 
 export interface Deposit {
@@ -148,17 +144,17 @@ function initDeposit(
 ) {
   return {
     listBrokers: async (): Promise<BrokerInfo[]> => {
-      return contract.listBrokers();
+      return contract.listBrokers({});
     },
     getBroker: async (id?: string): Promise<BrokerInfo | undefined> => {
-      return contract.getBroker({ args: { brokerId: id ?? brokerId } });
+      return contract.getBroker({ brokerId: id ?? brokerId });
     },
     addDeposit: async (id: string = accountId): Promise<DepositInfo> => {
       if (!id) throw new Error(`invalid account id: "${id}"`);
       return contract.addDeposit({
         args: { brokerId, accountId: id },
         gas: GAS,
-        amount: ONE,
+        attachedDeposit: ONE,
       });
     },
     releaseDeposits: async (): Promise<void> => {
@@ -168,7 +164,7 @@ function initDeposit(
     },
     hasDeposit: async (): Promise<boolean> => {
       if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
-      return contract.hasDeposit({ args: { brokerId, accountId } });
+      return contract.hasDeposit({ brokerId, accountId });
     },
   };
 }
@@ -226,7 +222,7 @@ export async function init(
   );
 
   if (!brokerInfo) {
-    const brokers = await contract.listBrokers();
+    const brokers = await contract.listBrokers({ args: {} });
     if (brokers.length < 1) {
       throw new Error("no registered brokers");
     }
@@ -236,7 +232,7 @@ export async function init(
       if (!accountId) {
         break;
       }
-      const has = await contract.hasDeposit({ args: { brokerId, accountId } });
+      const has = await contract.hasDeposit({ brokerId, accountId });
       if (has) {
         brokerInfo = broker;
       }

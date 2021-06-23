@@ -67,7 +67,7 @@ export const mockWalletConnection = (
   const _connectedAccount = {
     connection: fakeNear.connection,
     accountId,
-    async viewFunction(contractId, methodName, { args }) {
+    async viewFunction(contractId, methodName, args) {
       switch (methodName) {
         case "listBrokers": {
           return [...brokers.values()];
@@ -90,7 +90,6 @@ export const mockWalletConnection = (
       args = {},
       gas = DEFAULT_GAS,
       attachedDeposit = ONE.toString(),
-      ...rest
     }: FunctionCallOptions) {
       switch (methodName) {
         case "addDeposit": {
