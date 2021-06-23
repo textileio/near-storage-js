@@ -19,6 +19,7 @@
     "build": "tsc",
     "clean": "rimraf ./dist",
     "lint": "eslint --fix",
+    "test": "jest",
     "docs": "typedoc --excludePrivate --excludeInternal src/index.ts"
   },
   "keywords": [
@@ -32,17 +33,27 @@
   "author": "Textile Inc <contact@textile.io>",
   "license": "(MIT AND Apache-2.0)",
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.5",
+    "@babel/preset-typescript": "^7.14.5",
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-plugin-jest-dom": "^3.8.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "fetch-blob": "^3.0.1",
+    "fetch-mock-jest": "^1.5.1",
+    "form-data": "^3.0.1",
+    "formdata-node": "^3.5.4",
     "jest": "^26.6.3",
-    "jest-dom": "^4.0.0",
     "jest-environment-node": "^26.6.2",
+    "jsdom": "^16.6.0",
+    "localstorage-memory": "^1.0.3",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
+    "ts-node": "^10.0.0",
     "typedoc": "^0.20.36",
     "typescript": "^4.2.4"
   },
@@ -50,6 +61,6 @@
     "@stablelib/base64": "^1.0.0",
     "@types/bs58": "^4.0.1",
     "bs58": "^4.0.1",
-    "near-api-js": "^0.39.0"
+    "near-api-js": "^0.41.0"
   }
 }

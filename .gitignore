@@ -1,6 +1,7 @@
 .cache/
-dist/
-node_modules/
-out/
 .vscode/
+node_modules/
+dist/
+out/
 docs/
+coverage/

@@ -55,6 +55,7 @@ function initStorage(
       data: File,
       options: OpenOptions = {}
     ): Promise<StoreResponse> {
+      // TODO: Use dep injection to support alternative FormData impl
       const formData = new FormData();
       for (const [key, value] of Object.entries(options)) {
         formData.append(key, value);
@@ -104,21 +105,21 @@ function initStorage(
 type StorageType = ReturnType<typeof initStorage>;
 
 interface DepositContract extends Contract {
-  addDeposit: (
-    args: { brokerId: string; accountId?: string },
-    gas?: string,
-    amount?: string
-  ) => Promise<DepositInfo>;
-  releaseDeposits: (
-    args?: unknown,
-    gas?: string,
-    amount?: string
-  ) => Promise<void>;
+  addDeposit: (args: {
+    args: { brokerId: string; accountId?: string };
+    gas?: string;
+    attachedDeposit?: string;
+  }) => Promise<DepositInfo>;
+  releaseDeposits: (args: {
+    args: unknown;
+    gas?: string;
+    attachedDeposit?: string;
+  }) => Promise<void>;
   hasDeposit: (args: {
     brokerId: string;
     accountId: string;
   }) => Promise<boolean>;
-  getBroker: (brokerId?: string) => Promise<BrokerInfo | undefined>;
+  getBroker: (args: { brokerId: string }) => Promise<BrokerInfo | undefined>;
   listBrokers: () => Promise<BrokerInfo[]>;
 }
 
@@ -146,14 +147,20 @@ function initDeposit(
       return contract.listBrokers();
     },
     getBroker: async (id?: string): Promise<BrokerInfo | undefined> => {
-      return contract.getBroker(id ?? brokerId);
+      return contract.getBroker({ brokerId: id ?? brokerId });
     },
     addDeposit: async (id: string = accountId): Promise<DepositInfo> => {
       if (!id) throw new Error(`invalid account id: "${id}"`);
-      return contract.addDeposit({ brokerId, accountId: id }, GAS, ONE);
+      return contract.addDeposit({
+        args: { brokerId, accountId: id },
+        gas: GAS,
+        attachedDeposit: ONE,
+      });
     },
     releaseDeposits: async (): Promise<void> => {
-      return contract.releaseDeposits({}, GAS);
+      return contract
+        .releaseDeposits({ args: {}, gas: GAS })
+        .then(() => undefined);
     },
     hasDeposit: async (): Promise<boolean> => {
       if (!accountId) throw new Error(`invalid account id: "${accountId}"`);
@@ -167,14 +174,16 @@ type DepositType = ReturnType<typeof initDeposit>;
 function initSignIn(connection: WalletConnection, contractName: string) {
   const account = connection.account();
   const { networkId } = account.connection;
-  const fullContractName = `${contractName}.${networkId}`;
+  const contractId = `${contractName}.${networkId}`;
   return {
-    requestSignIn: async (
-      title?: string | undefined,
-      successUrl?: string | undefined,
-      failureUrl?: string | undefined
-    ): Promise<void> =>
-      connection.requestSignIn(fullContractName, title, successUrl, failureUrl),
+    requestSignIn: async ({
+      successUrl,
+      failureUrl,
+    }: {
+      successUrl?: string;
+      failureUrl?: string;
+    }): Promise<void> =>
+      connection.requestSignIn({ contractId, successUrl, failureUrl }),
     signOut: () => connection.signOut(),
   };
 }
