@@ -108,12 +108,12 @@ interface DepositContract extends Contract {
   addDeposit: (args: {
     args: { brokerId: string; accountId?: string };
     gas?: string;
-    attachedDeposit?: string;
+    amount?: string;
   }) => Promise<DepositInfo>;
   releaseDeposits: (args: {
     args: unknown;
     gas?: string;
-    attachedDeposit?: string;
+    amount?: string;
   }) => Promise<void>;
   hasDeposit: (args: {
     brokerId: string;
@@ -154,7 +154,7 @@ function initDeposit(
       return contract.addDeposit({
         args: { brokerId, accountId: id },
         gas: GAS,
-        attachedDeposit: ONE,
+        amount: ONE,
       });
     },
     releaseDeposits: async (): Promise<void> => {
