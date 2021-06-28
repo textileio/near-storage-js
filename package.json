@@ -11,7 +11,8 @@
     }
   },
   "files": [
-    "dist/*",
+    "dist/*.js?(.map)",
+    "dist/*.d.ts",
     "src/*.ts"
   ],
   "scripts": {
