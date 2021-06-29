@@ -182,7 +182,7 @@ function initSignIn(connection: WalletConnection, contractName: string) {
     }: {
       successUrl?: string;
       failureUrl?: string;
-    }): Promise<void> =>
+    } = {}): Promise<void> =>
       connection.requestSignIn({ contractId, successUrl, failureUrl }),
     signOut: () => connection.signOut(),
   };

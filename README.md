@@ -42,11 +42,11 @@ import { init } from "@textile/near-storage";
 const near = await connect({ ... });
 
 // Need to access wallet
-const wallet = new WalletConnection(near);
+const wallet = new WalletConnection(near, null);
 
 const storage = init(wallet);
 
-await storage.requestSignIn("my dapp");
+await storage.requestSignIn();
 
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "welcome.txt", {
@@ -73,7 +73,7 @@ import { jws } from "@textile/near-storage";
 const near = await connect({ ... });
 
 // Need to access wallet
-const wallet = new WalletConnection(near);
+const wallet = new WalletConnection(near, null);
 const { accountId } = account;
 const { signer, networkId } = account.connection;
 const token = await jws(signer, { accountId, networkId })
@@ -91,7 +91,7 @@ import { connect, WalletConnection } from "near-api-js";
 import { init } from "@textile/near-storage";
 
 const near = await connect({ ... });
-const wallet = new WalletConnection(near);
+const wallet = new WalletConnection(near, null);
 
 const storage = init(wallet);
 ```
@@ -99,7 +99,7 @@ const storage = init(wallet);
 The core storage API revolves around two key concepts: _deposits_ and _storage_. Leaving a deposit provides a degree of Sybil resistance, such that users looking for store data on Filecoin via the Brokerage system must first "deposit" funds proportional to the length of time they'd like to continue storing data. To store data, a minimum (default) deposit must be left with a broker.
 
 ```typescript
-await storage.requestSignIn("my dapp");
+await storage.requestSignIn();
 
 const deposit = await storage.addDeposit();
 console.log(deposit);
