@@ -87,7 +87,7 @@ function initStorage(
     store: async function store(
       data: File,
       options: OpenOptions = {}
-    ): Promise<RequestInfo> {
+    ): Promise<Request> {
       // TODO: Use dep injection to support alternative FormData impl
       const formData = new FormData();
       for (const [key, value] of Object.entries(options)) {
