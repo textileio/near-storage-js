@@ -7,6 +7,10 @@ const ONE = utils.format.parseNearAmount("1") ?? undefined;
 const GAS = "300000000000000"; // 3e13
 export const DEFAULT_CONTRACT_NAME = "filecoin-bridge";
 const REMOTE_URL = "https://broker.staging.textile.dev";
+const TOS = `
+This is a beta release of @textile/near-storage. Do not store personal, encrypted, or illegal data.
+Data will not be available permanently on either Filecoin or IPFS. See the full terms of service
+(TOS) for details: https://near.storage/terms`;
 
 export enum RequestStatus {
   Unknown = 0,
@@ -212,6 +216,9 @@ export async function init(
   connection: WalletConnection,
   options: { brokerInfo?: BrokerInfo; contractName?: string } = {}
 ): Promise<API> {
+  // TODO: Eventually remove this in favor of wallet singing warnings?
+  console.warn(TOS);
+
   const account = connection.account();
   const { accountId } = account;
   let { brokerInfo } = options;
