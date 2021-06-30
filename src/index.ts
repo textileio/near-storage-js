@@ -245,8 +245,8 @@ export async function init(
   connection: WalletConnection,
   options: { brokerInfo?: BrokerInfo; contractName?: string } = {}
 ): Promise<API> {
-  // TODO: Eventually remove this in favor of wallet singing warnings?
-  console.warn(TOS);
+  // TODO: Eventually remove this in favor of wallet singing information?
+  console.info(TOS);
 
   const account = connection.account();
   const { accountId } = account;
