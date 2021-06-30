@@ -161,14 +161,11 @@ describe("storage", () => {
         () => {
           // TODO: Inspect the body and do some extra checks
           return {
-            request: {
-              id: "fakeId",
-              cid: {
-                "/": "fakeCid",
-              },
-              status_code: Status.Batching,
+            id: "fakeId",
+            cid: {
+              "/": "fakeCid",
             },
-            deals: [],
+            status_code: Status.Batching,
           };
         },
         { overwriteRoutes: false }
@@ -234,14 +231,10 @@ describe("storage", () => {
     );
 
     const opts = { region: "earth" };
-    const { request, deals } = await storage.store(
-      (file as unknown) as File,
-      opts
-    );
+    const request = await storage.store((file as unknown) as File, opts);
     expect(request.id).toEqual("fakeId");
     expect(request.cid).toEqual({ "/": "fakeCid" });
     expect(request.status_code).toEqual(Status.Batching);
-    expect(deals).toHaveLength(0);
   });
 
   it("should be able to get status of some data", async () => {
@@ -251,9 +244,7 @@ describe("storage", () => {
       lastModified: new Date().getTime(),
     });
 
-    const {
-      request: { id },
-    } = await storage.store((file as unknown) as File);
+    const { id } = await storage.store((file as unknown) as File);
 
     const { request, deals } = await storage.status(id);
     expect(request).toHaveProperty("status_code", Status.Success);
