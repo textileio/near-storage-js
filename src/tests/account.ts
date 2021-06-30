@@ -1,11 +1,11 @@
 /* istanbul ignore file */
-import { ConnectedWalletAccount, Near, utils } from "near-api-js";
+import { ConnectedWalletAccount, Near, Account } from "near-api-js";
 import { BrokerInfo, DepositInfo } from "../index";
 import { keyStores, InMemorySigner, WalletConnection } from "near-api-js";
 import { encodeURLSafe } from "@stablelib/base64";
 import BN from "bn.js";
 
-const ONE = new BN(utils.format.parseNearAmount("1") ?? "").toString();
+const DEFAULT_DEPOSIT = new BN("250000000000000000000000").toString();
 const DEFAULT_GAS = new BN("30000000000000").toString();
 
 const encoder = new TextEncoder();
@@ -89,14 +89,14 @@ export const mockWalletConnection = (
       methodName,
       args = {},
       gas = DEFAULT_GAS,
-      attachedDeposit = ONE.toString(),
+      attachedDeposit = DEFAULT_DEPOSIT,
     }: FunctionCallOptions) {
       switch (methodName) {
         case "addDeposit": {
           const { brokerId, accountId } = args;
           if (!brokers.has(brokerId))
             throw new Error("addDeposit: invalid broker id");
-          else if (attachedDeposit !== ONE)
+          else if (attachedDeposit !== DEFAULT_DEPOSIT)
             throw new Error("addDeposit: invalid attached deposit");
           const info: DepositInfo = {
             accountId,

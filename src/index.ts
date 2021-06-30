@@ -1,9 +1,9 @@
-import { Contract, WalletConnection, utils } from "near-api-js";
+import { Contract, WalletConnection } from "near-api-js";
 import { jws, JwsOptions } from "./jws";
 
 export { jws, JwsOptions };
 
-const ONE = utils.format.parseNearAmount("1") ?? undefined;
+const DEPOSIT = "250000000000000000000000";
 const GAS = "300000000000000"; // 3e13
 export const DEFAULT_CONTRACT_NAME = "filecoin-bridge";
 const REMOTE_URL = "https://broker.staging.textile.dev";
@@ -158,7 +158,7 @@ function initDeposit(
       return contract.addDeposit({
         args: { brokerId, accountId: id },
         gas: GAS,
-        amount: ONE,
+        amount: DEPOSIT,
       });
     },
     releaseDeposits: async (): Promise<void> => {
