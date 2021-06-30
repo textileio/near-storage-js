@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>StoreResponse | @textile/near-storage</title>
+	<title>Deal | @textile/near-storage</title>
 	<meta name="description" content="Documentation for @textile/near-storage">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@textile/near-storage</a>
 				</li>
 				<li>
-					<a href="storeresponse.html">StoreResponse</a>
+					<a href="deal.html">Deal</a>
 				</li>
 			</ul>
-			<h1>Interface StoreResponse</h1>
+			<h1>Interface Deal</h1>
 		</div>
 	</div>
 </header>
@@ -68,7 +68,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Response from calls to the storage upload endpoint.</p>
+						<p>Deal contains information of an on-chain deal.
+						TODO: We may have to consider using BigInt for deal expiration in the future.</p>
 					</div>
 				</div>
 			</section>
@@ -76,7 +77,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">StoreResponse</span>
+						<span class="target">Deal</span>
 					</li>
 				</ul>
 			</section>
@@ -87,9 +88,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="storeresponse.html#cid" class="tsd-kind-icon">cid</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="storeresponse.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="storeresponse.html#status_code" class="tsd-kind-icon">status_<wbr>code</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="deal.html#deal_expiration" class="tsd-kind-icon">deal_<wbr>expiration</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="deal.html#deal_id" class="tsd-kind-icon">deal_<wbr>id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="deal.html#miner" class="tsd-kind-icon">miner</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,40 +99,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="cid" class="tsd-anchor"></a>
-					<h3>cid</h3>
-					<div class="tsd-signature tsd-kind-icon">cid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>/<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
+					<a name="deal_expiration" class="tsd-anchor"></a>
+					<h3>deal_<wbr>expiration</h3>
+					<div class="tsd-signature tsd-kind-icon">deal_<wbr>expiration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6cae529/src/index.ts#L34">index.ts:34</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>/<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6cae529/src/index.ts#L33">index.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L66">index.ts:66</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="status_code" class="tsd-anchor"></a>
-					<h3>status_<wbr>code</h3>
-					<div class="tsd-signature tsd-kind-icon">status_<wbr>code<span class="tsd-signature-symbol">:</span> <a href="../enums/requeststatus.html" class="tsd-signature-type" data-tsd-kind="Enumeration">RequestStatus</a></div>
+					<a name="deal_id" class="tsd-anchor"></a>
+					<h3>deal_<wbr>id</h3>
+					<div class="tsd-signature tsd-kind-icon">deal_<wbr>id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6cae529/src/index.ts#L37">index.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L65">index.ts:65</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="miner" class="tsd-anchor"></a>
+					<h3>miner</h3>
+					<div class="tsd-signature tsd-kind-icon">miner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L64">index.ts:64</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -148,11 +141,29 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum">
-						<a href="../enums/requeststatus.html" class="tsd-kind-icon">Request<wbr>Status</a>
+						<a href="../enums/status.html" class="tsd-kind-icon">Status</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="brokerinfo.html" class="tsd-kind-icon">Broker<wbr>Info</a>
 					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
+						<a href="deal.html" class="tsd-kind-icon">Deal</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="deal.html#deal_expiration" class="tsd-kind-icon">deal_<wbr>expiration</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="deal.html#deal_id" class="tsd-kind-icon">deal_<wbr>id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="deal.html#miner" class="tsd-kind-icon">miner</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="deposit.html" class="tsd-kind-icon">Deposit</a>
 					</li>
@@ -165,24 +176,12 @@
 					<li class=" tsd-kind-interface">
 						<a href="openoptions.html" class="tsd-kind-icon">Open<wbr>Options</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="storeresponse.html" class="tsd-kind-icon">Store<wbr>Response</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="storeresponse.html#cid" class="tsd-kind-icon">cid</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="storeresponse.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="storeresponse.html#status_code" class="tsd-kind-icon">status_<wbr>code</a>
-							</li>
-						</ul>
+					<li class=" tsd-kind-interface">
+						<a href="request.html" class="tsd-kind-icon">Request</a>
 					</li>
-				</ul>
-				<ul class="after-current">
+					<li class=" tsd-kind-interface">
+						<a href="requestinfo.html" class="tsd-kind-icon">Request<wbr>Info</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../modules.html#api" class="tsd-kind-icon">API</a>
 					</li>

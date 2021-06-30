@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>JwsOptions | @textile/near-storage</title>
+	<title>Request | @textile/near-storage</title>
 	<meta name="description" content="Documentation for @textile/near-storage">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@textile/near-storage</a>
 				</li>
 				<li>
-					<a href="jwsoptions.html">JwsOptions</a>
+					<a href="request.html">Request</a>
 				</li>
 			</ul>
-			<h1>Interface JwsOptions</h1>
+			<h1>Interface Request</h1>
 		</div>
 	</div>
 </header>
@@ -68,7 +68,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Options for creating a JWS string.</p>
+						<p>Request is a request for storing data in a Broker.</p>
 					</div>
 				</div>
 			</section>
@@ -76,18 +76,9 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">JwsOptions</span>
+						<span class="target">Request</span>
 					</li>
 				</ul>
-			</section>
-			<section class="tsd-panel tsd-kind-interface">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Options for creating a JWS string.</p>
-					</div>
-				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -96,8 +87,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="jwsoptions.html#accountid" class="tsd-kind-icon">account<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="jwsoptions.html#networkid" class="tsd-kind-icon">network<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="request.html#cid" class="tsd-kind-icon">cid</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="request.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="request.html#status_code" class="tsd-kind-icon">status_<wbr>code</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,22 +98,40 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="accountid" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> account<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">account<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="cid" class="tsd-anchor"></a>
+					<h3>cid</h3>
+					<div class="tsd-signature tsd-kind-icon">cid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>/<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/jws.ts#L12">jws.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L45">index.ts:45</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>/<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L44">index.ts:44</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="networkid" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> network<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">network<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="status_code" class="tsd-anchor"></a>
+					<h3>status_<wbr>code</h3>
+					<div class="tsd-signature tsd-kind-icon">status_<wbr>code<span class="tsd-signature-symbol">:</span> <a href="../enums/status.html" class="tsd-signature-type" data-tsd-kind="Enumeration">Status</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/jws.ts#L14">jws.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/328548d/src/index.ts#L48">index.ts:48</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -152,27 +162,30 @@
 					<li class=" tsd-kind-interface">
 						<a href="depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="openoptions.html" class="tsd-kind-icon">Open<wbr>Options</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a>
+						<a href="request.html" class="tsd-kind-icon">Request</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="jwsoptions.html#accountid" class="tsd-kind-icon">account<wbr>Id</a>
+								<a href="request.html#cid" class="tsd-kind-icon">cid</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="jwsoptions.html#networkid" class="tsd-kind-icon">network<wbr>Id</a>
+								<a href="request.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="request.html#status_code" class="tsd-kind-icon">status_<wbr>code</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface">
-						<a href="openoptions.html" class="tsd-kind-icon">Open<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="request.html" class="tsd-kind-icon">Request</a>
-					</li>
 					<li class=" tsd-kind-interface">
 						<a href="requestinfo.html" class="tsd-kind-icon">Request<wbr>Info</a>
 					</li>
