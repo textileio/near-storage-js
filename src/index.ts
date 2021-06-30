@@ -12,29 +12,58 @@ This is a beta release of @textile/near-storage. Do not store personal, encrypte
 Data will not be available permanently on either Filecoin or IPFS. See the full terms of service
 (TOS) for details: https://near.storage/terms`;
 
-export enum RequestStatus {
-  Unknown = 0,
-  Batching,
-  Preparing,
-  Auctioning,
-  DealMaking,
-  Success,
-}
-
 export interface BrokerInfo {
   brokerId: string;
   addresses: string[];
 }
 
 /**
- * Response from calls to the storage upload endpoint.
+ * Status is the status of a StorageRequest.
  */
-export interface StoreResponse {
+export enum Status {
+  // Unknown is the default value to an uninitialized
+  // StorageRequest. This status must be considered invalid in any
+  // real StorageRequest instance.
+  Unknown = 0,
+  // Batching indicates that the storage request is being batched.
+  Batching,
+  // Preparing indicates that the batch containing the data is being prepared.
+  Preparing,
+  // Auctioning indicates that the batch containing the data is being auctioned.
+  Auctioning,
+  // DealMaking indicates that the data is in deal-making process.
+  DealMaking,
+  // Success indicates that the request was stored in Filecoin.
+  Success,
+}
+
+/**
+ * Request is a request for storing data in a Broker.
+ */
+export interface Request {
   id: string;
   cid: {
     "/": string;
   };
-  status_code: RequestStatus;
+  status_code: Status;
+}
+
+/**
+ * RequestInfo describes the current state of a request.
+ */
+export interface RequestInfo {
+  request: Request;
+  deals: Deal[];
+}
+
+/**
+ * Deal contains information of an on-chain deal.
+ * TODO: We may have to consider using BigInt for deal expiration in the future.
+ */
+export interface Deal {
+  miner: string;
+  deal_id: number;
+  deal_expiration: number;
 }
 
 export interface OpenOptions {
@@ -58,7 +87,7 @@ function initStorage(
     store: async function store(
       data: File,
       options: OpenOptions = {}
-    ): Promise<StoreResponse> {
+    ): Promise<RequestInfo> {
       // TODO: Use dep injection to support alternative FormData impl
       const formData = new FormData();
       for (const [key, value] of Object.entries(options)) {
@@ -84,7 +113,7 @@ function initStorage(
       const err = await res.text();
       throw new Error(err);
     },
-    status: async function status(id: string): Promise<StoreResponse> {
+    status: async function status(id: string): Promise<RequestInfo> {
       const token = await jws(signer, {
         accountId,
         networkId,

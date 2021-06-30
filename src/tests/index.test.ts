@@ -5,7 +5,7 @@ import fetchMock from "fetch-mock-jest";
 import Blob from "fetch-blob";
 import FetchFile from "fetch-blob/file.js";
 import { FormData } from "formdata-node";
-import { init, API, RequestStatus } from "../index";
+import { init, API, Status } from "../index";
 import { mockWalletConnection } from "./account";
 
 // Mock env setup
@@ -161,11 +161,14 @@ describe("storage", () => {
         () => {
           // TODO: Inspect the body and do some extra checks
           return {
-            id: "fakeId",
-            cid: {
-              "/": "fakeCid",
+            request: {
+              id: "fakeId",
+              cid: {
+                "/": "fakeCid",
+              },
+              status_code: Status.Batching,
             },
-            status_code: RequestStatus.Preparing,
+            deals: [],
           };
         },
         { overwriteRoutes: false }
@@ -173,11 +176,30 @@ describe("storage", () => {
       .get("https://fake.broker.dev/storagerequest/fakeId", () => {
         // TODO: Inspect the body and do some extra checks
         return {
-          id: "fakeId",
-          cid: {
-            "/": "fakeCid",
+          request: {
+            id: "fakeId",
+            cid: {
+              "/": "fakeCid",
+            },
+            status_code: Status.Success,
           },
-          status_code: RequestStatus.Batching,
+          deals: [
+            {
+              miner: "miner1",
+              deal_id: 12345,
+              deal_expiration: 1945916,
+            },
+            {
+              miner: "miner2",
+              deal_id: 54321,
+              deal_expiration: 1945856,
+            },
+            {
+              miner: "miner3",
+              deal_id: 98765,
+              deal_expiration: 1942976,
+            },
+          ],
         };
       });
   });
@@ -212,13 +234,14 @@ describe("storage", () => {
     );
 
     const opts = { region: "earth" };
-    const { id, cid, status_code } = await storage.store(
+    const { request, deals } = await storage.store(
       (file as unknown) as File,
       opts
     );
-    expect(id).toEqual("fakeId");
-    expect(cid).toEqual({ "/": "fakeCid" });
-    expect(status_code).toEqual(RequestStatus.Preparing);
+    expect(request.id).toEqual("fakeId");
+    expect(request.cid).toEqual({ "/": "fakeCid" });
+    expect(request.status_code).toEqual(Status.Batching);
+    expect(deals).toHaveLength(0);
   });
 
   it("should be able to get status of some data", async () => {
@@ -228,9 +251,12 @@ describe("storage", () => {
       lastModified: new Date().getTime(),
     });
 
-    const { id } = await storage.store((file as unknown) as File);
+    const {
+      request: { id },
+    } = await storage.store((file as unknown) as File);
 
-    const status = await storage.status(id);
-    expect(status).toHaveProperty("status_code", RequestStatus.Batching);
+    const { request, deals } = await storage.status(id);
+    expect(request).toHaveProperty("status_code", Status.Success);
+    expect(deals).toHaveLength(3);
   });
 });
