@@ -6,7 +6,8 @@
 [![Release](https://img.shields.io/github/release/textileio/near-storage-js.svg)](https://github.com/textileio/near-storage-js/releases/latest)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg)](https://github.com/RichardLitt/standard-readme)
 
-[![Docs](https://github.com/textileio/near-storage-js/workflows/Docs/badge.svg)](https://textileio.github.io/near-storage-js)
+[![Docs](https://github.com/textileio/near-storage-js/workflows/Docs/badge.svg)](https://github.com/textileio/near-storage-js/actions/workflows/docs.yml)
+[![Tests](https://github.com/textileio/near-storage-js/workflows/Test/badge.svg)](https://github.com/textileio/near-storage-js/actions/workflows/test.yml)
 
 > Javascript SDK for Textile's Broker-based data storage system on the Near blockchain.
 
