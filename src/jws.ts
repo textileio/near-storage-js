@@ -1,20 +1,9 @@
 import type { Signer } from "near-api-js";
 import { encodeURLSafe } from "@stablelib/base64";
 import { encode } from "bs58";
+import { JwsOptions } from "./model";
 
 const encoder = new TextEncoder();
-
-/**
- * Options for creating a JWS string.
- */
-export interface JwsOptions {
-  // The accountId of the identity to use.
-  accountId?: string;
-  // The identifier of the network for determining signing keys.
-  networkId?: string;
-  // Any additional key/value pairs to include in the JWT payload.
-  [key: string]: string | number | undefined;
-}
 
 /**
  * Create a JWS.
@@ -40,7 +29,7 @@ export async function jws(
   const header = { alg: "EdDSASha256", typ: "JWT", jwk };
   // UNIX origin time for current time
   const now = ~~(Date.now() / 1000);
-  const oneHour = now + 60 * 10; // Default to 10 minutes
+  const oneHour = now + (opts.offset ?? 60 * 10); // Default to ~10 minutes
   // Compute did
   const buffer = new Uint8Array(2 + publicKey.data.length);
   buffer[0] = 0xed; // Using ed25519 by default

@@ -1,12 +1,19 @@
 /* istanbul ignore file */
-import { ConnectedWalletAccount, Near, Account } from "near-api-js";
-import { BrokerInfo, DepositInfo } from "../index";
-import { keyStores, InMemorySigner, WalletConnection } from "near-api-js";
+import {
+  ConnectedWalletAccount,
+  Near,
+  Account,
+  keyStores,
+  InMemorySigner,
+  WalletConnection,
+} from "near-api-js";
 import { encodeURLSafe } from "@stablelib/base64";
 import BN from "bn.js";
+import { BrokerInfo, DepositInfo } from "../model";
+import { DEPOSIT, GAS } from "../utils";
 
-const DEFAULT_DEPOSIT = new BN("250000000000000000000000").toString();
-const DEFAULT_GAS = new BN("30000000000000").toString();
+const DEFAULT_DEPOSIT = new BN(DEPOSIT).toString();
+const DEFAULT_GAS = new BN(GAS).toString();
 
 const encoder = new TextEncoder();
 
@@ -48,11 +55,12 @@ const mockNear = (keyStore: keyStores.KeyStore) =>
       networkId: "networkId",
       signer: new InMemorySigner(keyStore),
     },
-    async account(_accountId: string) {
+    async account(accountId: string) {
       return ({
         async state() {
           // noop
         },
+        accountId,
       } as unknown) as Account;
     },
   } as unknown) as Near);
