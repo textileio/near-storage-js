@@ -4,18 +4,13 @@ import { KeyPair, keyStores, WalletConnection } from "near-api-js";
 import fetchMock from "fetch-mock-jest";
 import Blob from "fetch-blob";
 import FetchFile from "fetch-blob/file.js";
-import { FormData } from "formdata-node";
-import { init, API, Status } from "../index";
+import { FormData as FetchForm } from "formdata-node";
+import { init, API, Status, requestSignIn } from "../index";
 import { mockWalletConnection } from "./account";
 
 // Mock env setup
-globalThis.window = {
-  localStorage,
-} as Window & typeof globalThis;
-globalThis.document = {
-  title: "documentTitle",
-} as Document;
-(globalThis as any).FormData = FormData;
+globalThis.window = { localStorage } as Window & typeof globalThis;
+globalThis.document = { title: "documentTitle" } as Document;
 
 let history: [any, string, string | null | undefined][] = [];
 let lastRedirectUrl: string;
@@ -45,8 +40,9 @@ describe("alternate", () => {
   });
 
   it("should automatically attempt to pick a broker", async () => {
-    const storage = await init(walletConnection, {
-      contractName: "fakeContract",
+    const account = walletConnection.account();
+    const storage = await init(account, {
+      contractId: "fakeContract",
     });
     expect(storage).toBeDefined();
   });
@@ -72,17 +68,17 @@ describe("contract", () => {
     });
     walletConnection = mockWalletConnection(keyStore, "fakeAccount.networkId");
 
-    storage = await init(walletConnection, {
+    storage = await init(walletConnection.account(), {
       brokerInfo: { brokerId: "brokerId.networkId", addresses: [] },
-      contractName: "fakeContract",
+      contractId: "fakeContract",
     });
   });
 
   describe("can request sign in", () => {
     beforeEach(() => keyStore.clear());
 
-    it("wraps the wallet connection sign in", () => {
-      return storage.requestSignIn({
+    it("wraps the wallet connection sign in", async () => {
+      return await requestSignIn(walletConnection, {
         successUrl: "http://example.com/success",
         failureUrl: "http://example.com/fail",
       });
@@ -104,16 +100,16 @@ describe("contract", () => {
   });
 
   describe("can request sign out", () => {
-    it("wraps the wallet connection sign out", () => {
+    it("uses the default wallet connection sign out", () => {
       // TODO: Right now, this is just pass or fail, should test properly with shims etc
-      storage.signOut();
+      walletConnection.signOut();
     });
   });
 
   describe("can interact with smart contract view methods", () => {
     beforeEach(async () => {
       keyStore.clear();
-      await storage.requestSignIn({
+      await requestSignIn(walletConnection, {
         successUrl: "http://example.com/success",
         failureUrl: "http://example.com/fail",
       });
@@ -210,28 +206,46 @@ describe("storage", () => {
       KeyPair.fromRandom("ED25519")
     );
 
-    storage = await init(walletConnection, {
+    storage = await init(walletConnection.account(), {
       brokerInfo: {
         brokerId: "brokerId.networkId",
         addresses: ["https://fake.broker.dev"],
       },
-      contractName: "fakeContract",
+      contractId: "fakeContract",
     });
   });
 
-  it("should be able to store some data", async () => {
+  it("should be able to store some data using File objects", async () => {
     const blob = new Blob(["Hello, world!"], { type: "text/plain" });
     const file = new FetchFile([blob], "welcome.txt", {
       type: "text/plain",
       lastModified: new Date().getTime(),
     });
 
-    expect(storage.store((file as unknown) as File)).rejects.toThrowError(
-      "upload failed"
-    );
+    expect(
+      storage.store((file as unknown) as File, {
+        FormData: FetchForm as typeof FormData,
+      })
+    ).rejects.toThrowError("upload failed");
 
-    const opts = { region: "earth" };
+    const opts = { region: "earth", FormData: FetchForm as typeof FormData };
     const request = await storage.store((file as unknown) as File, opts);
+    expect(request.id).toEqual("fakeId");
+    expect(request.cid).toEqual({ "/": "fakeCid" });
+    expect(request.status_code).toEqual(Status.Batching);
+  });
+
+  it("should be able to store some data using FormData objects", async () => {
+    const blob = new Blob(["Hello, world!"], { type: "text/plain" });
+    const file = new FetchFile([blob], "welcome.txt", {
+      type: "text/plain",
+      lastModified: new Date().getTime(),
+    });
+
+    const formData = new FetchForm();
+    formData.append("file", file, file.name);
+
+    const request = await storage.store(formData as FormData);
     expect(request.id).toEqual("fakeId");
     expect(request.cid).toEqual({ "/": "fakeCid" });
     expect(request.status_code).toEqual(Status.Batching);
@@ -243,6 +257,9 @@ describe("storage", () => {
       type: "text/plain",
       lastModified: new Date().getTime(),
     });
+
+    // Test global fallback
+    (globalThis as any).FormData = FetchForm;
 
     const { id } = await storage.store((file as unknown) as File);
 

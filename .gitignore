@@ -5,3 +5,6 @@ dist/
 out/
 docs/
 coverage/
+.DS_Store
+# Temporary inclusion
+bin
