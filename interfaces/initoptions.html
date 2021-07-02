@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DepositInfo | @textile/near-storage</title>
+	<title>InitOptions | @textile/near-storage</title>
 	<meta name="description" content="Documentation for @textile/near-storage">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,21 +55,28 @@
 					<a href="../modules.html">@textile/near-storage</a>
 				</li>
 				<li>
-					<a href="depositinfo.html">DepositInfo</a>
+					<a href="initoptions.html">InitOptions</a>
 				</li>
 			</ul>
-			<h1>Interface DepositInfo</h1>
+			<h1>Interface InitOptions</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Options for init configuration</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DepositInfo</span>
+						<span class="target">InitOptions</span>
 					</li>
 				</ul>
 			</section>
@@ -80,9 +87,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="depositinfo.html#accountid" class="tsd-kind-icon">account<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="depositinfo.html#brokerid" class="tsd-kind-icon">broker<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="depositinfo.html#deposit" class="tsd-kind-icon">deposit</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="initoptions.html#brokerinfo" class="tsd-kind-icon">broker<wbr>Info</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="initoptions.html#contractid" class="tsd-kind-icon">contract<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
@@ -91,32 +97,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="accountid" class="tsd-anchor"></a>
-					<h3>account<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">account<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="brokerinfo" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> broker<wbr>Info</h3>
+					<div class="tsd-signature tsd-kind-icon">broker<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="brokerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">BrokerInfo</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/model.ts#L11">model.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/model.ts#L36">model.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="brokerid" class="tsd-anchor"></a>
-					<h3>broker<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">broker<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="contractid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> contract<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">contract<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/model.ts#L12">model.ts:12</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="deposit" class="tsd-anchor"></a>
-					<h3>deposit</h3>
-					<div class="tsd-signature tsd-kind-icon">deposit<span class="tsd-signature-symbol">:</span> <a href="deposit.html" class="tsd-signature-type" data-tsd-kind="Interface">Deposit</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/model.ts#L13">model.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/model.ts#L38">model.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -144,27 +140,24 @@
 					<li class=" tsd-kind-interface">
 						<a href="deposit.html" class="tsd-kind-icon">Deposit</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a>
+						<a href="initoptions.html" class="tsd-kind-icon">Init<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="depositinfo.html#accountid" class="tsd-kind-icon">account<wbr>Id</a>
+								<a href="initoptions.html#brokerinfo" class="tsd-kind-icon">broker<wbr>Info</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="depositinfo.html#brokerid" class="tsd-kind-icon">broker<wbr>Id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="depositinfo.html#deposit" class="tsd-kind-icon">deposit</a>
+								<a href="initoptions.html#contractid" class="tsd-kind-icon">contract<wbr>Id</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface">
-						<a href="initoptions.html" class="tsd-kind-icon">Init<wbr>Options</a>
-					</li>
 					<li class=" tsd-kind-interface">
 						<a href="jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a>
 					</li>

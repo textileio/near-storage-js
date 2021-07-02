@@ -66,7 +66,8 @@
 					<a href="https://www.npmjs.com/package/@textile/near-storage"><img src="https://img.shields.io/npm/v/@textile/near-storage.svg" alt="npm (scoped)"></a>
 					<a href="https://github.com/textileio/near-storage-js/releases/latest"><img src="https://img.shields.io/github/release/textileio/near-storage-js.svg" alt="Release"></a>
 				<a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/standard--readme-OK-green.svg" alt="standard-readme compliant"></a></p>
-				<p><a href="https://textileio.github.io/near-storage-js"><img src="https://github.com/textileio/near-storage-js/workflows/Docs/badge.svg" alt="Docs"></a></p>
+				<p><a href="https://github.com/textileio/near-storage-js/actions/workflows/docs.yml"><img src="https://github.com/textileio/near-storage-js/workflows/Docs/badge.svg" alt="Docs"></a>
+				<a href="https://github.com/textileio/near-storage-js/actions/workflows/test.yml"><img src="https://github.com/textileio/near-storage-js/workflows/Test/badge.svg" alt="Tests"></a></p>
 				<blockquote>
 					<p>Javascript SDK for Textile&#39;s Broker-based data storage system on the Near blockchain.</p>
 				</blockquote>
@@ -85,8 +86,7 @@
 				<a href="#background" id="background" style="color: inherit; text-decoration: none;">
 					<h1>Background</h1>
 				</a>
-				<p><code>near-storage</code> provides a zero-config Typescript/Javascript SDK that makes it easy to store data on the Filecoin network from any Near-based dApp.
-				<code>near-storage</code> should feel comfortable to developers already familiar with Near Javascript libraries. <code>near-storage</code> provides a small but powerful API surface that integrates nicely with existing Near DApp development best practices. Simply import the library, select a broker, lock some funds, and you are ready to start firing storage deals at a Broker&#39;s upload endpoint.</p>
+				<p><code>@textile/near-storage</code> provides a zero-config Typescript/Javascript SDK that makes it easy to store data on the Filecoin network from any NEAR-based dApp. <code>@textile/near-storage</code> should feel comfortable to developers already familiar with <a href="https://near.org/">NEAR</a> Javascript libraries. The SDK provides a small but powerful API surface that integrates nicely with existing NEAR development best practices. Simply import the library, deposit some funds, and you are ready to start submitting data to be stored on the Filecoin network.</p>
 				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 					<h1>Install</h1>
 				</a>
@@ -95,18 +95,15 @@
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
-				<p><em>Typical dApp flow</em></p>
 				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">connect</span><span style="color: #000000">, </span><span style="color: #001080">WalletConnection</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;near-api-js&quot;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">init</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">init</span><span style="color: #000000">, </span><span style="color: #001080">requestSignIn</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">near</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">connect</span><span style="color: #000000">({ ... });</span>
 
 <span style="color: #008000">// Need to access wallet</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">wallet</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">WalletConnection</span><span style="color: #000000">(</span><span style="color: #001080">near</span><span style="color: #000000">, </span><span style="color: #0000FF">null</span><span style="color: #000000">);</span>
-
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">requestSignIn</span><span style="color: #000000">(</span><span style="color: #001080">wallet</span><span style="color: #000000">);</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">storage</span><span style="color: #000000"> = </span><span style="color: #795E26">init</span><span style="color: #000000">(</span><span style="color: #001080">wallet</span><span style="color: #000000">);</span>
-
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">requestSignIn</span><span style="color: #000000">();</span>
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">blob</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Blob</span><span style="color: #000000">([</span><span style="color: #A31515">&quot;Hello, world!&quot;</span><span style="color: #000000">], { </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;text/plain&quot;</span><span style="color: #000000"> });</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">file</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">File</span><span style="color: #000000">([</span><span style="color: #001080">blob</span><span style="color: #000000">], </span><span style="color: #A31515">&quot;welcome.txt&quot;</span><span style="color: #000000">, {</span>
@@ -118,56 +115,79 @@
 
 <span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">id</span><span style="color: #000000">, </span><span style="color: #0070C1">cid</span><span style="color: #000000"> } = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">store</span><span style="color: #000000">(</span><span style="color: #001080">file</span><span style="color: #000000">);</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">status</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">status</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">request</span><span style="color: #000000">, </span><span style="color: #0070C1">deals</span><span style="color: #000000"> } = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">request</span><span style="color: #000000">.</span><span style="color: #001080">status_code</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">([...</span><span style="color: #001080">deals</span><span style="color: #000000">])</span>
 
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">signOut</span><span style="color: #000000">();</span>
-</code></pre>
-				<p><em>Creating a JWS</em></p>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">connect</span><span style="color: #000000">, </span><span style="color: #001080">WalletConnection</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;near-api-js&quot;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">jws</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
-
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">near</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">connect</span><span style="color: #000000">({ ... });</span>
-
-<span style="color: #008000">// Need to access wallet</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">wallet</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">WalletConnection</span><span style="color: #000000">(</span><span style="color: #001080">near</span><span style="color: #000000">, </span><span style="color: #0000FF">null</span><span style="color: #000000">);</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">accountId</span><span style="color: #000000"> } = </span><span style="color: #001080">account</span><span style="color: #000000">;</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">signer</span><span style="color: #000000">, </span><span style="color: #0070C1">networkId</span><span style="color: #000000"> } = </span><span style="color: #001080">account</span><span style="color: #000000">.</span><span style="color: #001080">connection</span><span style="color: #000000">;</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">token</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">jws</span><span style="color: #000000">(</span><span style="color: #001080">signer</span><span style="color: #000000">, { </span><span style="color: #001080">accountId</span><span style="color: #000000">, </span><span style="color: #001080">networkId</span><span style="color: #000000"> })</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">token</span><span style="color: #000000">)</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">wallet</span><span style="color: #000000">.</span><span style="color: #795E26">signOut</span><span style="color: #000000">();</span>
 </code></pre>
 				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
 					<h1>API</h1>
 				</a>
-				<p>For full API documentation, see <a href="https://textileio.github.io/near-storage-js">https://textileio.github.io/near-storage-js</a>.</p>
-				<p>The main <code>near-storage</code> entry point exposes an initialization function that takes a Near wallet connection, and returns a Storage object with a minimal API. The initialization function can optionally take information about a known broker, otherwise, a random broker (or a broker with which the user has previously interacted) is automatically selected:</p>
+				<p>For full library documentation (TypeDocs), see <a href="https://textileio.github.io/near-storage-js">https://textileio.github.io/near-storage-js</a>.</p>
+				<p>The main <code>@textile/near-storage</code> entry point exposes an initialization function that takes a NEAR <code>Account</code> object, and returns a <code>Storage</code> object with a minimal <code>API</code> interface. The initialization function can optionally take information about a known Filecoin storage provider, otherwise, a random provider (or a provider with which the user has previously interacted) is automatically selected:</p>
 				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">connect</span><span style="color: #000000">, </span><span style="color: #001080">WalletConnection</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;near-api-js&quot;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">init</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">init</span><span style="color: #000000">, </span><span style="color: #001080">requestSignIn</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
 
+<span style="color: #008000">// See https://github.com/textileio/near-storage-dapp-demo for an example of initializing a NEAR dApp</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">near</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">connect</span><span style="color: #000000">({ ... });</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">wallet</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">WalletConnection</span><span style="color: #000000">(</span><span style="color: #001080">near</span><span style="color: #000000">, </span><span style="color: #0000FF">null</span><span style="color: #000000">);</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">storage</span><span style="color: #000000"> = </span><span style="color: #795E26">init</span><span style="color: #000000">(</span><span style="color: #001080">wallet</span><span style="color: #000000">);</span>
-</code></pre>
-				<p>The core storage API revolves around two key concepts: <em>deposits</em> and <em>storage</em>. Leaving a deposit provides a degree of Sybil resistance, such that users looking for store data on Filecoin via the Brokerage system must first &quot;deposit&quot; funds proportional to the length of time they&#39;d like to continue storing data. To store data, a minimum (default) deposit must be left with a broker.</p>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">requestSignIn</span><span style="color: #000000">();</span>
+<span style="color: #008000">// Sign-in and authorize the @textile/near-storage smart contract (`filecoin-bridge.testnet`)</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">requestSignIn</span><span style="color: #000000">(</span><span style="color: #001080">wallet</span><span style="color: #000000">)</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">deposit</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">addDeposit</span><span style="color: #000000">();</span>
+<span style="color: #008000">// Initialize the storage object, and you&#039;re ready to go</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">storage</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">init</span><span style="color: #000000">(</span><span style="color: #001080">wallet</span><span style="color: #000000">);</span>
+</code></pre>
+				<a href="#create-session" id="create-session" style="color: inherit; text-decoration: none;">
+					<h2>Create session</h2>
+				</a>
+				<p>The core storage API revolves around two key concepts: <em>deposits</em> and <em>storage</em>. Leaving a deposit provides a degree of Sybil resistance, such that users looking to store data on Filecoin via the provider must first deposit funds proportional to the length of time they&#39;d like to continue storing data (for testnet, the default timeout is ~10 minutes). To store data, a minimum (default) deposit must be left with a provider:</p>
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">deposit</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">addDeposit</span><span style="color: #000000">();</span>
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">deposit</span><span style="color: #000000">);</span>
 </code></pre>
-				<p>A deposit is generally valid for about 1hr (based on blocks), after which time, it can be released by the user, or any other party interacting with the smart contract (such as the broker itself). This provides a means to release funds after a storage &quot;session&quot; has completed, without locking funds in the contract during the Filecoin proof process.</p>
-				<p>Once a valid deposit is available, the app/user can push data to the broker using the <code>store</code> endpoint. This simply takes a File object, and send the bytes to the broker for preparation and storage. See [INSERT LINK TO BROKER DOCS HERE] for details on this process.</p>
+				<p>A deposit is generally valid for about 10 minutes (based on blocks). Adding further deposits extends your session, though all funds will be held until they expire, so use this feature sparingly. After funds expire, they can be released by the user or any other party interacting with the SDK&#39;s smart contract (such as the provider itself). This provides a means to release funds after a storage session has completed, without locking funds in the contract during the Filecoin proof process.</p>
+				<a href="#store-data" id="store-data" style="color: inherit; text-decoration: none;">
+					<h2>Store data</h2>
+				</a>
+				<p>Once a valid deposit is available, the app/user can push data to the provider using the <code>store</code> endpoint. This simply takes a <code>File</code> (or <code>FormData</code>) object, and send the bytes to the provider for preparation and Filecoin storage.</p>
 				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">blob</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Blob</span><span style="color: #000000">([</span><span style="color: #A31515">&quot;Hello, world!&quot;</span><span style="color: #000000">], { </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;text/plain&quot;</span><span style="color: #000000"> });</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">file</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">File</span><span style="color: #000000">([</span><span style="color: #001080">blob</span><span style="color: #000000">], </span><span style="color: #A31515">&quot;welcome.txt&quot;</span><span style="color: #000000">, {</span>
 <span style="color: #000000">  </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;text/plain&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">  </span><span style="color: #001080">lastModified:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">(),</span>
+<span style="color: #000000">  </span><span style="color: #001080">lastModified:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">()</span>
 <span style="color: #000000">});</span>
 
+<span style="color: #008000">// The store API also takes optional configuration parameters</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">id</span><span style="color: #000000">, </span><span style="color: #0070C1">cid</span><span style="color: #000000"> } = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">store</span><span style="color: #000000">(</span><span style="color: #001080">file</span><span style="color: #000000">);</span>
 </code></pre>
-				<p>The &quot;status&quot; of the file can be queried using its <code>id</code>. The storage process ranges from &quot;batching&quot; files together, to &quot;preparing&quot; the storage deal, to &quot;auctioning&quot; the set of storage deals, to the actual &quot;deal making&quot; and &quot;success&quot; of the final storage deal on Filecoin. Along the way, clients may query the status in order to provide feedback to users.</p>
-				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">status</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">);</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">status</span><span style="color: #000000">);</span>
+				<a href="#check-status" id="check-status" style="color: inherit; text-decoration: none;">
+					<h2>Check status</h2>
+				</a>
+				<p>The status of the file can be queried using its <code>id</code>. The storage process ranges from &quot;batching&quot; files together, to &quot;preparing&quot; the storage deal, to &quot;auctioning&quot; the set of storage deals, to the actual &quot;deal making&quot; and &quot;success&quot; of the final storage deal on Filecoin. Along the way, clients may query the status in order to provide feedback to users.</p>
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> { </span><span style="color: #0070C1">request</span><span style="color: #000000">, </span><span style="color: #0070C1">deals</span><span style="color: #000000"> } = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">);</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">request</span><span style="color: #000000">.</span><span style="color: #001080">status_code</span><span style="color: #000000">);</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">deals</span><span style="color: #000000">); </span><span style="color: #008000">// Array, empty if no deals on chain yet</span>
+</code></pre>
+				<p>It is now safe to release the deposit(s):</p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">storage</span><span style="color: #000000">.</span><span style="color: #795E26">releaseDeposits</span><span style="color: #000000">();</span>
+</code></pre>
+				<a href="#other-apis" id="other-apis" style="color: inherit; text-decoration: none;">
+					<h2>Other APIs</h2>
+				</a>
+				<p>The <code>@textile/near-storage</code> SDK provides a few other endpoints for developers to use, including a <a href="https://datatracker.ietf.org/doc/html/rfc7515">JSON Web Signature (JWS)</a> signing utility that let&#39;s you create a (modified) JWS token. Here&#39;s an example using the <code>jws</code> API from a NodeJS script (assumes you have signed in with <a href="https://github.com/near/near-cli"><code>near login</code></a>):</p>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">keyStores</span><span style="color: #000000">, </span><span style="color: #001080">InMemorySigner</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;near-api-js&quot;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">os</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;os&quot;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">path</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;path&quot;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">jws</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@textile/near-storage&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">keyStore</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">keyStores</span><span style="color: #000000">.</span><span style="color: #795E26">UnencryptedFileSystemKeyStore</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #001080">path</span><span style="color: #000000">.</span><span style="color: #795E26">join</span><span style="color: #000000">(</span><span style="color: #001080">os</span><span style="color: #000000">.</span><span style="color: #795E26">homedir</span><span style="color: #000000">(), </span><span style="color: #A31515">&quot;.near-credentials&quot;</span><span style="color: #000000">)</span>
+<span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">accountId</span><span style="color: #000000"> = </span><span style="color: #A31515">&quot;account.testnet&quot;</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">networkId</span><span style="color: #000000"> = </span><span style="color: #A31515">&quot;testnet&quot;</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">aud</span><span style="color: #000000"> = </span><span style="color: #A31515">&quot;provider.testnet&quot;</span><span style="color: #000000">;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">signer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">InMemorySigner</span><span style="color: #000000">(</span><span style="color: #001080">keyStore</span><span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">token</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">jws</span><span style="color: #000000">(</span><span style="color: #001080">signer</span><span style="color: #000000">, { </span><span style="color: #001080">accountId</span><span style="color: #000000">, </span><span style="color: #001080">networkId</span><span style="color: #000000">, </span><span style="color: #001080">aud</span><span style="color: #000000"> });</span>
 </code></pre>
 				<a href="#maintainers" id="maintainers" style="color: inherit; text-decoration: none;">
 					<h1>Maintainers</h1>
@@ -211,6 +231,9 @@
 						<a href="interfaces/depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/initoptions.html" class="tsd-kind-icon">Init<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -222,17 +245,32 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/requestinfo.html" class="tsd-kind-icon">Request<wbr>Info</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/signinoptions.html" class="tsd-kind-icon">Sign<wbr>InOptions</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="modules.html#api" class="tsd-kind-icon">API</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="modules.html#default_contract_name" class="tsd-kind-icon">DEFAULT_<wbr>CONTRACT_<wbr>NAME</a>
+						<a href="modules.html#contract_id" class="tsd-kind-icon">CONTRACT_<wbr>ID</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#deposit" class="tsd-kind-icon">DEPOSIT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#gas" class="tsd-kind-icon">GAS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#remote_url" class="tsd-kind-icon">REMOTE_<wbr>URL</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#init" class="tsd-kind-icon">init</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#jws" class="tsd-kind-icon">jws</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#requestsignin" class="tsd-kind-icon">request<wbr>Sign<wbr>In</a>
 					</li>
 				</ul>
 			</nav>

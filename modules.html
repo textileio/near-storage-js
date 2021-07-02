@@ -74,10 +74,12 @@
 								<li class="tsd-kind-interface"><a href="interfaces/deal.html" class="tsd-kind-icon">Deal</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/deposit.html" class="tsd-kind-icon">Deposit</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/initoptions.html" class="tsd-kind-icon">Init<wbr>Options</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/openoptions.html" class="tsd-kind-icon">Open<wbr>Options</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/request.html" class="tsd-kind-icon">Request</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/requestinfo.html" class="tsd-kind-icon">Request<wbr>Info</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/signinoptions.html" class="tsd-kind-icon">Sign<wbr>InOptions</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -89,7 +91,10 @@
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable"><a href="modules.html#default_contract_name" class="tsd-kind-icon">DEFAULT_<wbr>CONTRACT_<wbr>NAME</a></li>
+								<li class="tsd-kind-variable"><a href="modules.html#contract_id" class="tsd-kind-icon">CONTRACT_<wbr>ID</a></li>
+								<li class="tsd-kind-variable"><a href="modules.html#deposit" class="tsd-kind-icon">DEPOSIT</a></li>
+								<li class="tsd-kind-variable"><a href="modules.html#gas" class="tsd-kind-icon">GAS</a></li>
+								<li class="tsd-kind-variable"><a href="modules.html#remote_url" class="tsd-kind-icon">REMOTE_<wbr>URL</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -97,6 +102,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function"><a href="modules.html#init" class="tsd-kind-icon">init</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#jws" class="tsd-kind-icon">jws</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#requestsignin" class="tsd-kind-icon">request<wbr>Sign<wbr>In</a></li>
 							</ul>
 						</section>
 					</div>
@@ -107,10 +113,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="api" class="tsd-anchor"></a>
 					<h3>API</h3>
-					<div class="tsd-signature tsd-kind-icon">API<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">StorageType</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">DepositType</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">SignInType</span></div>
+					<div class="tsd-signature tsd-kind-icon">API<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">StorageType</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">DepositType</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/c7c4b86/src/index.ts#L242">index.ts:242</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/storage.ts#L162">storage.ts:162</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -118,12 +124,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable">
-					<a name="default_contract_name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> DEFAULT_<wbr>CONTRACT_<wbr>NAME</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>CONTRACT_<wbr>NAME<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;filecoin-bridge&quot;</span><span class="tsd-signature-symbol"> = &quot;filecoin-bridge&quot;</span></div>
+					<a name="contract_id" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> CONTRACT_<wbr>ID</h3>
+					<div class="tsd-signature tsd-kind-icon">CONTRACT_<wbr>ID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;filecoin-bridge.testnet&quot;</span><span class="tsd-signature-symbol"> = &quot;filecoin-bridge.testnet&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/c7c4b86/src/index.ts#L8">index.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/utils.ts#L8">utils.ts:8</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="deposit" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> DEPOSIT</h3>
+					<div class="tsd-signature tsd-kind-icon">DEPOSIT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;250000000000000000000000&quot;</span><span class="tsd-signature-symbol"> = &quot;250000000000000000000000&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/utils.ts#L9">utils.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="gas" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> GAS</h3>
+					<div class="tsd-signature tsd-kind-icon">GAS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;300000000000000&quot;</span><span class="tsd-signature-symbol"> = &quot;300000000000000&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/utils.ts#L10">utils.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="remote_url" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> REMOTE_<wbr>URL</h3>
+					<div class="tsd-signature tsd-kind-icon">REMOTE_<wbr>URL<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;https://broker.staging.textile.dev&quot;</span><span class="tsd-signature-symbol"> = &quot;https://broker.staging.textile.dev&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/utils.ts#L11">utils.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -134,30 +170,22 @@
 					<a name="init" class="tsd-anchor"></a>
 					<h3>init</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span>connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WalletConnection</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>brokerInfo<span class="tsd-signature-symbol">?: </span><a href="interfaces/brokerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">BrokerInfo</a><span class="tsd-signature-symbol">; </span>contractName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="modules.html#api" class="tsd-signature-type" data-tsd-kind="Type alias">API</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span>account<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Account</span>, options<span class="tsd-signature-symbol">?: </span><a href="interfaces/initoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">InitOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="modules.html#api" class="tsd-signature-type" data-tsd-kind="Type alias">API</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/c7c4b86/src/index.ts#L244">index.ts:244</a></li>
+									<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/storage.ts#L164">storage.ts:164</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>connection: <span class="tsd-signature-type">WalletConnection</span></h5>
+									<h5>account: <span class="tsd-signature-type">Account</span></h5>
 								</li>
 								<li>
-									<h5>options: <span class="tsd-signature-symbol">{ </span>brokerInfo<span class="tsd-signature-symbol">?: </span><a href="interfaces/brokerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">BrokerInfo</a><span class="tsd-signature-symbol">; </span>contractName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> broker<wbr>Info<span class="tsd-signature-symbol">?: </span><a href="interfaces/brokerinfo.html" class="tsd-signature-type" data-tsd-kind="Interface">BrokerInfo</a></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> contract<wbr>Name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
-										</li>
-									</ul>
+									<h5>options: <a href="interfaces/initoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">InitOptions</a><span class="tsd-signature-symbol"> = {}</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="modules.html#api" class="tsd-signature-type" data-tsd-kind="Type alias">API</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -174,7 +202,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/c7c4b86/src/jws.ts#L26">jws.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/jws.ts#L15">jws.ts:15</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -200,6 +228,32 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>A Promise that resolves to the full JWS string.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="requestsignin" class="tsd-anchor"></a>
+					<h3>request<wbr>Sign<wbr>In</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">request<wbr>Sign<wbr>In<span class="tsd-signature-symbol">(</span>connection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WalletConnection</span>, __namedParameters<span class="tsd-signature-symbol">: </span><a href="interfaces/signinoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SignInOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/textileio/near-storage-js/blob/6d7e45e/src/signin.ts#L5">signin.ts:5</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>connection: <span class="tsd-signature-type">WalletConnection</span></h5>
+								</li>
+								<li>
+									<h5>__namedParameters: <a href="interfaces/signinoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SignInOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -231,6 +285,9 @@
 						<a href="interfaces/depositinfo.html" class="tsd-kind-icon">Deposit<wbr>Info</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/initoptions.html" class="tsd-kind-icon">Init<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/jwsoptions.html" class="tsd-kind-icon">Jws<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -242,17 +299,32 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/requestinfo.html" class="tsd-kind-icon">Request<wbr>Info</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/signinoptions.html" class="tsd-kind-icon">Sign<wbr>InOptions</a>
+					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="modules.html#api" class="tsd-kind-icon">API</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="modules.html#default_contract_name" class="tsd-kind-icon">DEFAULT_<wbr>CONTRACT_<wbr>NAME</a>
+						<a href="modules.html#contract_id" class="tsd-kind-icon">CONTRACT_<wbr>ID</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#deposit" class="tsd-kind-icon">DEPOSIT</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#gas" class="tsd-kind-icon">GAS</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#remote_url" class="tsd-kind-icon">REMOTE_<wbr>URL</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#init" class="tsd-kind-icon">init</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#jws" class="tsd-kind-icon">jws</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#requestsignin" class="tsd-kind-icon">request<wbr>Sign<wbr>In</a>
 					</li>
 				</ul>
 			</nav>
