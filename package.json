@@ -1,6 +1,6 @@
 {
   "name": "@textile/near-storage",
-  "version": "5.0.1",
+  "version": "6.0.0",
   "description": "Javascript SDK for Textile's Broker-based data storage system on the Near blockchain",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
