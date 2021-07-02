@@ -23,8 +23,7 @@
 
 # Background
 
-`near-storage` provides a zero-config Typescript/Javascript SDK that makes it easy to store data on the Filecoin network from any Near-based dApp.
-`near-storage` should feel comfortable to developers already familiar with Near Javascript libraries. `near-storage` provides a small but powerful API surface that integrates nicely with existing Near DApp development best practices. Simply import the library, select a broker, lock some funds, and you are ready to start firing storage deals at a Broker's upload endpoint.
+`@textile/near-storage` provides a zero-config Typescript/Javascript SDK that makes it easy to store data on the Filecoin network from any NEAR-based dApp. `@textile/near-storage` should feel comfortable to developers already familiar with [NEAR](https://near.org/) Javascript libraries. The SDK provides a small but powerful API surface that integrates nicely with existing NEAR development best practices. Simply import the library, deposit some funds, and you are ready to start submitting data to be stored on the Filecoin network.
 
 # Install
 
@@ -34,20 +33,16 @@ npm i @textile/near-storage
 
 ## Usage
 
-_Typical dApp flow_
-
 ```typescript
 import { connect, WalletConnection } from "near-api-js";
-import { init } from "@textile/near-storage";
+import { init, requestSignIn } from "@textile/near-storage";
 
 const near = await connect({ ... });
 
 // Need to access wallet
 const wallet = new WalletConnection(near, null);
-
+await requestSignIn(wallet);
 const storage = init(wallet);
-
-await storage.requestSignIn();
 
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "welcome.txt", {
@@ -59,72 +54,94 @@ await storage.addDeposit();
 
 const { id, cid } = await storage.store(file);
 
-const status = await storage.status(id)
-console.log(status)
+const { request, deals } = await storage.status(id)
+console.log(request.status_code)
+console.log([...deals])
 
-await storage.signOut();
-```
-
-_Creating a JWS_
-
-```typescript
-import { connect, WalletConnection } from "near-api-js";
-import { jws } from "@textile/near-storage";
-
-const near = await connect({ ... });
-
-// Need to access wallet
-const wallet = new WalletConnection(near, null);
-const { accountId } = account;
-const { signer, networkId } = account.connection;
-const token = await jws(signer, { accountId, networkId })
-console.log(token)
+await wallet.signOut();
 ```
 
 # API
 
-For full API documentation, see https://textileio.github.io/near-storage-js.
+For full library documentation (TypeDocs), see https://textileio.github.io/near-storage-js.
 
-The main `near-storage` entry point exposes an initialization function that takes a Near wallet connection, and returns a Storage object with a minimal API. The initialization function can optionally take information about a known broker, otherwise, a random broker (or a broker with which the user has previously interacted) is automatically selected:
+The main `@textile/near-storage` entry point exposes an initialization function that takes a NEAR `Account` object, and returns a `Storage` object with a minimal `API` interface. The initialization function can optionally take information about a known Filecoin storage provider, otherwise, a random provider (or a provider with which the user has previously interacted) is automatically selected:
 
 ```typescript
 import { connect, WalletConnection } from "near-api-js";
-import { init } from "@textile/near-storage";
+import { init, requestSignIn } from "@textile/near-storage";
 
+// See https://github.com/textileio/near-storage-dapp-demo for an example of initializing a NEAR dApp
 const near = await connect({ ... });
 const wallet = new WalletConnection(near, null);
 
-const storage = init(wallet);
+// Sign-in and authorize the @textile/near-storage smart contract (`filecoin-bridge.testnet`)
+await requestSignIn(wallet)
+
+// Initialize the storage object, and you're ready to go
+const storage = await init(wallet);
 ```
 
-The core storage API revolves around two key concepts: _deposits_ and _storage_. Leaving a deposit provides a degree of Sybil resistance, such that users looking for store data on Filecoin via the Brokerage system must first "deposit" funds proportional to the length of time they'd like to continue storing data. To store data, a minimum (default) deposit must be left with a broker.
+## Create session
+
+The core storage API revolves around two key concepts: _deposits_ and _storage_. Leaving a deposit provides a degree of Sybil resistance, such that users looking to store data on Filecoin via the provider must first deposit funds proportional to the length of time they'd like to continue storing data (for testnet, the default timeout is ~10 minutes). To store data, a minimum (default) deposit must be left with a provider:
 
 ```typescript
-await storage.requestSignIn();
-
 const deposit = await storage.addDeposit();
 console.log(deposit);
 ```
 
-A deposit is generally valid for about 1hr (based on blocks), after which time, it can be released by the user, or any other party interacting with the smart contract (such as the broker itself). This provides a means to release funds after a storage "session" has completed, without locking funds in the contract during the Filecoin proof process.
+A deposit is generally valid for about 10 minutes (based on blocks). Adding further deposits extends your session, though all funds will be held until they expire, so use this feature sparingly. After funds expire, they can be released by the user or any other party interacting with the SDK's smart contract (such as the provider itself). This provides a means to release funds after a storage session has completed, without locking funds in the contract during the Filecoin proof process.
 
-Once a valid deposit is available, the app/user can push data to the broker using the `store` endpoint. This simply takes a File object, and send the bytes to the broker for preparation and storage. See [INSERT LINK TO BROKER DOCS HERE] for details on this process.
+## Store data
+
+Once a valid deposit is available, the app/user can push data to the provider using the `store` endpoint. This simply takes a `File` (or `FormData`) object, and send the bytes to the provider for preparation and Filecoin storage.
 
 ```typescript
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "welcome.txt", {
   type: "text/plain",
-  lastModified: new Date().getTime(),
+  lastModified: new Date().getTime()
 });
 
+// The store API also takes optional configuration parameters
 const { id, cid } = await storage.store(file);
 ```
 
-The "status" of the file can be queried using its `id`. The storage process ranges from "batching" files together, to "preparing" the storage deal, to "auctioning" the set of storage deals, to the actual "deal making" and "success" of the final storage deal on Filecoin. Along the way, clients may query the status in order to provide feedback to users.
+## Check status
+
+The status of the file can be queried using its `id`. The storage process ranges from "batching" files together, to "preparing" the storage deal, to "auctioning" the set of storage deals, to the actual "deal making" and "success" of the final storage deal on Filecoin. Along the way, clients may query the status in order to provide feedback to users.
 
 ```typescript
-const status = await storage.status(id);
-console.log(status);
+const { request, deals } = await storage.status(id);
+console.log(request.status_code);
+console.log(deals); // Array, empty if no deals on chain yet
+```
+
+It is now safe to release the deposit(s):
+
+```typescript
+await storage.releaseDeposits();
+```
+
+## Other APIs
+
+The `@textile/near-storage` SDK provides a few other endpoints for developers to use, including a [JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515) signing utility that let's you create a (modified) JWS token. Here's an example using the `jws` API from a NodeJS script (assumes you have signed in with [`near login`](https://github.com/near/near-cli)):
+
+```javascript
+import { keyStores, InMemorySigner } from "near-api-js";
+import os from "os";
+import path from "path";
+import { jws } from "@textile/near-storage";
+
+const keyStore = new keyStores.UnencryptedFileSystemKeyStore(
+  path.join(os.homedir(), ".near-credentials")
+);
+const accountId = "account.testnet";
+const networkId = "testnet";
+const aud = "provider.testnet";
+const signer = new InMemorySigner(keyStore);
+const token = await jws(signer, { accountId, networkId, aud });
 ```
 
 # Maintainers
