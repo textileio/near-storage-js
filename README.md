@@ -1,6 +1,5 @@
 # @textile/near-storage
 
-[![GitHub license](https://img.shields.io/github/license/textileio/near-storage-js.svg)](./LICENSE)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/textileio/near-storage-js.svg)](./package.json)
 [![npm (scoped)](https://img.shields.io/npm/v/@textile/near-storage.svg)](https://www.npmjs.com/package/@textile/near-storage)
 [![Release](https://img.shields.io/github/release/textileio/near-storage-js.svg)](https://github.com/textileio/near-storage-js/releases/latest)
