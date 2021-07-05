@@ -10,11 +10,6 @@ import {
   Request,
 } from "./model";
 
-const TOS = `
-This is a beta release of @textile/near-storage. Do not store personal, encrypted, or illegal data.
-Data will not be available permanently on either Filecoin or IPFS. See the full terms of service
-(TOS) for details: https://near.storage/terms`;
-
 function initStorage(account: Account, options: { brokerInfo: BrokerInfo }) {
   const { accountId } = account;
   const { signer, networkId } = account.connection;
@@ -165,9 +160,6 @@ export async function init(
   account: Account,
   options: InitOptions = {}
 ): Promise<API> {
-  // TODO: Eventually remove this in favor of wallet singing information?
-  console.info(TOS);
-
   const { accountId } = account;
   // eslint-disable-next-line prefer-const
   let { brokerInfo, contractId } = options;
