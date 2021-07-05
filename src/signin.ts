@@ -4,7 +4,7 @@ import { SignInOptions } from "./model";
 
 export async function requestSignIn(
   connection: WalletConnection,
-  { successUrl, failureUrl, contractId }: SignInOptions
+  { successUrl, failureUrl, contractId }: SignInOptions = {}
 ): Promise<void> {
   if (!contractId) contractId = CONTRACT_ID;
   return connection.requestSignIn({ contractId, successUrl, failureUrl });
