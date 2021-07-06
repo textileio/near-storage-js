@@ -111,11 +111,6 @@ export interface OpenOptions {
    * Which region to specify for Filecoin storage.
    */
   region?: string;
-  /**
-   * FormData class to use in environments without a FormData global (i.e., NodeJS)
-   */
-  FormData?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new (...args: any[]): FormData;
-  };
+  // Others
+  headers?: Record<string, string | number>;
 }

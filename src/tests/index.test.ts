@@ -2,9 +2,9 @@
 import * as localStorage from "localstorage-memory";
 import { KeyPair, keyStores, WalletConnection } from "near-api-js";
 import fetchMock from "fetch-mock-jest";
-import Blob from "fetch-blob";
-import FetchFile from "fetch-blob/file.js";
-import { FormData as FetchForm } from "formdata-node";
+import { FormData as NodeForm, File as NodeFile } from "formdata-node";
+import { Encoder } from "form-data-encoder";
+import { Readable } from "stream";
 import { init, API, Status, requestSignIn } from "../index";
 import { mockWalletConnection } from "./account";
 
@@ -216,50 +216,46 @@ describe("storage", () => {
   });
 
   it("should be able to store some data using File objects", async () => {
-    const blob = new Blob(["Hello, world!"], { type: "text/plain" });
-    const file = new FetchFile([blob], "welcome.txt", {
+    // Test global fallback
+    (globalThis as any).FormData = NodeForm;
+
+    const file = new NodeFile(["Hello, world!"], "welcome.txt", {
       type: "text/plain",
       lastModified: new Date().getTime(),
     });
 
-    expect(
-      storage.store((file as unknown) as File, {
-        FormData: FetchForm as typeof FormData,
-      })
-    ).rejects.toThrowError("upload failed");
+    expect(storage.store((file as unknown) as File)).rejects.toThrowError(
+      "upload failed"
+    );
 
-    const opts = { region: "earth", FormData: FetchForm as typeof FormData };
+    const opts = { region: "earth" };
     const request = await storage.store((file as unknown) as File, opts);
     expect(request.id).toEqual("fakeId");
     expect(request.cid).toEqual({ "/": "fakeCid" });
     expect(request.status_code).toEqual(Status.Batching);
   });
 
-  it("should be able to store some data using FormData objects", async () => {
-    const blob = new Blob(["Hello, world!"], { type: "text/plain" });
-    const file = new FetchFile([blob], "welcome.txt", {
-      type: "text/plain",
-      lastModified: new Date().getTime(),
+  it("should be able to store some data using streams", async () => {
+    const formData = new NodeForm();
+    formData.set("file", "Hello, world!");
+    const encoder = new Encoder(formData);
+    const request = await storage.store(Readable.from(encoder) as any, {
+      headers: encoder.headers,
     });
 
-    const formData = new FetchForm();
-    formData.append("file", file, file.name);
-
-    const request = await storage.store(formData as FormData);
     expect(request.id).toEqual("fakeId");
     expect(request.cid).toEqual({ "/": "fakeCid" });
     expect(request.status_code).toEqual(Status.Batching);
   });
 
   it("should be able to get status of some data", async () => {
-    const blob = new Blob(["Hello, world!"], { type: "text/plain" });
-    const file = new FetchFile([blob], "welcome.txt", {
+    const file = new NodeFile(["Hello, world!"], "welcome.txt", {
       type: "text/plain",
       lastModified: new Date().getTime(),
     });
 
     // Test global fallback
-    (globalThis as any).FormData = FetchForm;
+    (globalThis as any).FormData = NodeForm;
 
     const { id } = await storage.store((file as unknown) as File);
 

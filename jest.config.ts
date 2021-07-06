@@ -23,7 +23,6 @@ export default {
       statements: 80,
     },
   },
-  transformIgnorePatterns: ["node_modules/(?!(fetch-blob)/)"],
 
   // Automatically reset mock state between every test
   resetMocks: false,
