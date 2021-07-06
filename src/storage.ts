@@ -1,6 +1,13 @@
 import { Contract, Account } from "near-api-js";
+import type { Readable } from "stream";
 import { jws } from "./jws";
-import { isFormData, CONTRACT_ID, DEPOSIT, GAS, REMOTE_URL } from "./utils";
+import {
+  isReadableStream,
+  CONTRACT_ID,
+  DEPOSIT,
+  GAS,
+  REMOTE_URL,
+} from "./utils";
 import {
   BrokerInfo,
   OpenOptions,
@@ -32,19 +39,18 @@ function initStorage(account: Account, options: { brokerInfo: BrokerInfo }) {
      * @returns Promise that resolves to a storage request object.
      */
     store: async function store(
-      data: File | FormData,
+      data: File | Readable,
       options: OpenOptions = {}
     ): Promise<Request> {
-      let formData: FormData;
-      if (isFormData(data)) {
-        formData = data;
+      let body: FormData | Readable;
+      if (isReadableStream(data)) {
+        body = data;
       } else {
-        const FormData = options.FormData ?? globalThis.FormData;
-        formData = new FormData();
-        for (const [key, value] of Object.entries(options)) {
-          formData.append(key, value);
+        body = new FormData();
+        if (options.region) {
+          body.append("region", options.region);
         }
-        formData.append("file", data, data.name);
+        body.append("file", data, data.name);
       }
       const token = await jws(signer, {
         accountId,
@@ -53,8 +59,9 @@ function initStorage(account: Account, options: { brokerInfo: BrokerInfo }) {
       });
       const res = await fetch(`${url}/upload`, {
         method: "POST",
-        body: formData,
+        body: body as BodyInit,
         headers: {
+          ...options.headers,
           Authorization: `Bearer ${token}`,
         },
       });
