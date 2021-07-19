@@ -46,11 +46,15 @@ export async function jws(
     ...extras, // Allow callers to overwrite defaults via extras
   };
   // Optional: https://www.npmjs.com/package/canonicalize
-  const encodedHeader = encodeURLSafe(encoder.encode(JSON.stringify(header)));
-  const encodedPayload = encodeURLSafe(encoder.encode(JSON.stringify(payload)));
+  const encodedHeader = encodeURLSafe(
+    encoder.encode(JSON.stringify(header))
+  ).replace(/=+$/, "");
+  const encodedPayload = encodeURLSafe(
+    encoder.encode(JSON.stringify(payload))
+  ).replace(/=+$/, "");
   const message = encoder.encode(`${encodedHeader}.${encodedPayload}`);
   const { signature } = await signer.signMessage(message, accountId, networkId);
-  const encodedSignature = encodeURLSafe(signature);
+  const encodedSignature = encodeURLSafe(signature).replace(/=+$/, "");
   const jws = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
   return jws;
 }
