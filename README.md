@@ -41,7 +41,7 @@ const near = await connect({ ... });
 // Need to access wallet
 const wallet = new WalletConnection(near, null);
 await requestSignIn(wallet);
-const storage = init(wallet);
+const storage = init(wallet.account());
 
 const blob = new Blob(["Hello, world!"], { type: "text/plain" });
 const file = new File([blob], "welcome.txt", {
@@ -78,7 +78,7 @@ const wallet = new WalletConnection(near, null);
 await requestSignIn(wallet)
 
 // Initialize the storage object, and you're ready to go
-const storage = await init(wallet);
+const storage = await init(wallet.account());
 ```
 
 ## Create session
